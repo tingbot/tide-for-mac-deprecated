@@ -1,0 +1,425 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5632708919DC170F0035768D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5632708819DC170F0035768D /* main.m */; };
+		5632708C19DC170F0035768D /* Document.m in Sources */ = {isa = PBXBuildFile; fileRef = 5632708B19DC170F0035768D /* Document.m */; };
+		5632708F19DC170F0035768D /* Document.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5632708D19DC170F0035768D /* Document.xib */; };
+		5632709119DC170F0035768D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5632709019DC170F0035768D /* Images.xcassets */; };
+		5632709419DC17100035768D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5632709219DC17100035768D /* MainMenu.xib */; };
+		563270A019DC17100035768D /* TideTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5632709F19DC17100035768D /* TideTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5632709A19DC17100035768D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5632707B19DC170F0035768D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5632708219DC170F0035768D;
+			remoteInfo = Tide;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		5632708319DC170F0035768D /* Tide.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tide.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5632708719DC170F0035768D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5632708819DC170F0035768D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5632708A19DC170F0035768D /* Document.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Document.h; sourceTree = "<group>"; };
+		5632708B19DC170F0035768D /* Document.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Document.m; sourceTree = "<group>"; };
+		5632708E19DC170F0035768D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Document.xib; sourceTree = "<group>"; };
+		5632709019DC170F0035768D /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		5632709319DC17100035768D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		5632709919DC17100035768D /* TideTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TideTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5632709E19DC17100035768D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5632709F19DC17100035768D /* TideTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TideTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5632708019DC170F0035768D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5632709619DC17100035768D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5632707A19DC170F0035768D = {
+			isa = PBXGroup;
+			children = (
+				5632708519DC170F0035768D /* Tide */,
+				5632709C19DC17100035768D /* TideTests */,
+				5632708419DC170F0035768D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5632708419DC170F0035768D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5632708319DC170F0035768D /* Tide.app */,
+				5632709919DC17100035768D /* TideTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5632708519DC170F0035768D /* Tide */ = {
+			isa = PBXGroup;
+			children = (
+				5632708A19DC170F0035768D /* Document.h */,
+				5632708B19DC170F0035768D /* Document.m */,
+				5632708D19DC170F0035768D /* Document.xib */,
+				5632709019DC170F0035768D /* Images.xcassets */,
+				5632709219DC17100035768D /* MainMenu.xib */,
+				5632708619DC170F0035768D /* Supporting Files */,
+			);
+			path = Tide;
+			sourceTree = "<group>";
+		};
+		5632708619DC170F0035768D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5632708719DC170F0035768D /* Info.plist */,
+				5632708819DC170F0035768D /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5632709C19DC17100035768D /* TideTests */ = {
+			isa = PBXGroup;
+			children = (
+				5632709F19DC17100035768D /* TideTests.m */,
+				5632709D19DC17100035768D /* Supporting Files */,
+			);
+			path = TideTests;
+			sourceTree = "<group>";
+		};
+		5632709D19DC17100035768D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5632709E19DC17100035768D /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5632708219DC170F0035768D /* Tide */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 563270A319DC17100035768D /* Build configuration list for PBXNativeTarget "Tide" */;
+			buildPhases = (
+				5632707F19DC170F0035768D /* Sources */,
+				5632708019DC170F0035768D /* Frameworks */,
+				5632708119DC170F0035768D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Tide;
+			productName = Tide;
+			productReference = 5632708319DC170F0035768D /* Tide.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5632709819DC17100035768D /* TideTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 563270A619DC17100035768D /* Build configuration list for PBXNativeTarget "TideTests" */;
+			buildPhases = (
+				5632709519DC17100035768D /* Sources */,
+				5632709619DC17100035768D /* Frameworks */,
+				5632709719DC17100035768D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5632709B19DC17100035768D /* PBXTargetDependency */,
+			);
+			name = TideTests;
+			productName = TideTests;
+			productReference = 5632709919DC17100035768D /* TideTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5632707B19DC170F0035768D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0600;
+				ORGANIZATIONNAME = Tingbot;
+				TargetAttributes = {
+					5632708219DC170F0035768D = {
+						CreatedOnToolsVersion = 6.0.1;
+					};
+					5632709819DC17100035768D = {
+						CreatedOnToolsVersion = 6.0.1;
+						TestTargetID = 5632708219DC170F0035768D;
+					};
+				};
+			};
+			buildConfigurationList = 5632707E19DC170F0035768D /* Build configuration list for PBXProject "Tide" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5632707A19DC170F0035768D;
+			productRefGroup = 5632708419DC170F0035768D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5632708219DC170F0035768D /* Tide */,
+				5632709819DC17100035768D /* TideTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5632708119DC170F0035768D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5632708F19DC170F0035768D /* Document.xib in Resources */,
+				5632709119DC170F0035768D /* Images.xcassets in Resources */,
+				5632709419DC17100035768D /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5632709719DC17100035768D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5632707F19DC170F0035768D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5632708C19DC170F0035768D /* Document.m in Sources */,
+				5632708919DC170F0035768D /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5632709519DC17100035768D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				563270A019DC17100035768D /* TideTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5632709B19DC17100035768D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5632708219DC170F0035768D /* Tide */;
+			targetProxy = 5632709A19DC17100035768D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		5632708D19DC170F0035768D /* Document.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5632708E19DC170F0035768D /* Base */,
+			);
+			name = Document.xib;
+			sourceTree = "<group>";
+		};
+		5632709219DC17100035768D /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5632709319DC17100035768D /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		563270A119DC17100035768D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		563270A219DC17100035768D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		563270A419DC17100035768D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Tide/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		563270A519DC17100035768D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Tide/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		563270A719DC17100035768D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = TideTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tide.app/Contents/MacOS/Tide";
+			};
+			name = Debug;
+		};
+		563270A819DC17100035768D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = TideTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tide.app/Contents/MacOS/Tide";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5632707E19DC170F0035768D /* Build configuration list for PBXProject "Tide" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				563270A119DC17100035768D /* Debug */,
+				563270A219DC17100035768D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		563270A319DC17100035768D /* Build configuration list for PBXNativeTarget "Tide" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				563270A419DC17100035768D /* Debug */,
+				563270A519DC17100035768D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		563270A619DC17100035768D /* Build configuration list for PBXNativeTarget "TideTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				563270A719DC17100035768D /* Debug */,
+				563270A819DC17100035768D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5632707B19DC170F0035768D /* Project object */;
+}
