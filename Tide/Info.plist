@@ -13,6 +13,8 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string></string>
+			<key>LSTypeIsPackage</key>
+			<true/>
 			<key>CFBundleTypeName</key>
 			<string>DocumentType</string>
 			<key>CFBundleTypeOSTypes</key>
