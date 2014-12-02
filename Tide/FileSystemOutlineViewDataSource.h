@@ -10,8 +10,8 @@
 
 @interface FileSystemOutlineViewDataSource : NSObject <NSOutlineViewDataSource>
 
-- (instancetype)initWithPath:(NSString *)path;
+- (instancetype)initWithFileWrapper:(NSFileWrapper *)path;
 
-@property (strong) NSString *path;
+@property (strong) NSFileWrapper *fileWrapper;
 
 @end

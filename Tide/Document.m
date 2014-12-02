@@ -10,12 +10,15 @@
 #import <ACEView.h>
 #import "FileSystemOutlineViewDataSource.h"
 
+@import Quartz;
+
 @interface Document ()
 
 @property (weak) IBOutlet ACEView *codeView;
 @property (weak) IBOutlet NSOutlineView *outlineView;
 
 @property (strong) NSString *code;
+@property (strong) NSFileWrapper *fileWrapper;
 @property (strong) FileSystemOutlineViewDataSource *outlineDataSource;
 
 @end
@@ -51,22 +54,20 @@
     return @"Document";
 }
 
-- (void)setFileURL:(NSURL *)fileURL
-{
-    [super setFileURL:fileURL];
-    
-    self.outlineDataSource = [[FileSystemOutlineViewDataSource alloc] initWithPath:fileURL.path];
-    self.outlineView.dataSource = self.outlineDataSource;
-}
-
 - (NSFileWrapper *)fileWrapperOfType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
     self.code = self.codeView.string;
 
+    NSFileWrapper *oldMainWrapper = self.fileWrapper.fileWrappers[@"main.py"];
     NSFileWrapper *mainWrapper = [[NSFileWrapper alloc] initRegularFileWithContents:
                                   [self.code dataUsingEncoding:NSUTF8StringEncoding]];
+    mainWrapper.preferredFilename = @"main.py";
     
-    return [[NSFileWrapper alloc] initDirectoryWithFileWrappers:@{ @"main.py": mainWrapper }];
+    
+    [self.fileWrapper removeFileWrapper:oldMainWrapper];
+    [self.fileWrapper addFileWrapper:mainWrapper];
+    
+    return self.fileWrapper;
 }
 
 - (BOOL)readFromFileWrapper:(NSFileWrapper *)fileWrapper ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
@@ -76,20 +77,12 @@
     self.code = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     self.codeView.string = self.code;
     
+    self.outlineDataSource = [[FileSystemOutlineViewDataSource alloc] initWithFileWrapper:fileWrapper];
+    self.fileWrapper = fileWrapper;
+    self.outlineView.dataSource = self.outlineDataSource;
+
     return self.code ? YES : NO;
 }
 
-- (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError {
-    // Insert code here to read your document from the given data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning NO.
-    // You can also choose to override -readFromFileWrapper:ofType:error: or -readFromURL:ofType:error: instead.
-    // If you override either of these, you should also override -isEntireFileLoaded to return NO if the contents are lazily loaded.
-
-    NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    
-    self.code = string;
-    self.codeView.string = self.code;
-    
-    return self.code ? YES : NO;
-}
 
 @end

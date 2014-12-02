@@ -15,7 +15,6 @@
 		5632709419DC17100035768D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5632709219DC17100035768D /* MainMenu.xib */; };
 		563270A019DC17100035768D /* TideTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5632709F19DC17100035768D /* TideTests.m */; };
 		56D1D2801A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 56D1D27F1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m */; };
-		56D1D2831A1BFA8B0084E76A /* FileSystemObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 56D1D2821A1BFA8B0084E76A /* FileSystemObject.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,8 +43,6 @@
 		56C9819319F9093C00C9589B /* TBDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TBDevice.h; sourceTree = "<group>"; };
 		56D1D27E1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemOutlineViewDataSource.h; sourceTree = "<group>"; };
 		56D1D27F1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemOutlineViewDataSource.m; sourceTree = "<group>"; };
-		56D1D2811A1BFA8B0084E76A /* FileSystemObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemObject.h; sourceTree = "<group>"; };
-		56D1D2821A1BFA8B0084E76A /* FileSystemObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemObject.m; sourceTree = "<group>"; };
 		A92CEEF1C365440A92FDEFBC /* libPods-Tide.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Tide.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -97,8 +94,6 @@
 				5632708D19DC170F0035768D /* Document.xib */,
 				56D1D27E1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.h */,
 				56D1D27F1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m */,
-				56D1D2811A1BFA8B0084E76A /* FileSystemObject.h */,
-				56D1D2821A1BFA8B0084E76A /* FileSystemObject.m */,
 				5632709019DC170F0035768D /* Images.xcassets */,
 				5632709219DC17100035768D /* MainMenu.xib */,
 				5632708619DC170F0035768D /* Supporting Files */,
@@ -276,7 +271,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				56D1D2801A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m in Sources */,
-				56D1D2831A1BFA8B0084E76A /* FileSystemObject.m in Sources */,
 				5632708C19DC170F0035768D /* Document.m in Sources */,
 				5632708919DC170F0035768D /* main.m in Sources */,
 			);
