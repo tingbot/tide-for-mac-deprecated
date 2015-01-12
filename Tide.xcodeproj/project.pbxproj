@@ -14,6 +14,10 @@
 		5632709119DC170F0035768D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5632709019DC170F0035768D /* Images.xcassets */; };
 		5632709419DC17100035768D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5632709219DC17100035768D /* MainMenu.xib */; };
 		563270A019DC17100035768D /* TideTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5632709F19DC17100035768D /* TideTests.m */; };
+		564772151A63D9F500498A35 /* NSFileWrapper+QuicklookURL.m in Sources */ = {isa = PBXBuildFile; fileRef = 564772141A63D9F500498A35 /* NSFileWrapper+QuicklookURL.m */; };
+		5682BD0E1A2E2AEB00CF08DB /* CodeDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5682BD0D1A2E2AEB00CF08DB /* CodeDocument.m */; };
+		5682BD111A2E2B0400CF08DB /* NSViewDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5682BD101A2E2B0400CF08DB /* NSViewDocument.m */; };
+		5682BD141A30682400CF08DB /* QuickLookDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5682BD131A30682400CF08DB /* QuickLookDocument.m */; };
 		56D1D2801A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 56D1D27F1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +44,14 @@
 		5632709919DC17100035768D /* TideTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TideTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5632709E19DC17100035768D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5632709F19DC17100035768D /* TideTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TideTests.m; sourceTree = "<group>"; };
+		564772131A63D9F500498A35 /* NSFileWrapper+QuicklookURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileWrapper+QuicklookURL.h"; sourceTree = "<group>"; };
+		564772141A63D9F500498A35 /* NSFileWrapper+QuicklookURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileWrapper+QuicklookURL.m"; sourceTree = "<group>"; };
+		5682BD0C1A2E2AEB00CF08DB /* CodeDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeDocument.h; sourceTree = "<group>"; };
+		5682BD0D1A2E2AEB00CF08DB /* CodeDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeDocument.m; sourceTree = "<group>"; };
+		5682BD0F1A2E2B0400CF08DB /* NSViewDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSViewDocument.h; sourceTree = "<group>"; };
+		5682BD101A2E2B0400CF08DB /* NSViewDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSViewDocument.m; sourceTree = "<group>"; };
+		5682BD121A30682400CF08DB /* QuickLookDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookDocument.h; sourceTree = "<group>"; };
+		5682BD131A30682400CF08DB /* QuickLookDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickLookDocument.m; sourceTree = "<group>"; };
 		56C9819319F9093C00C9589B /* TBDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TBDevice.h; sourceTree = "<group>"; };
 		56D1D27E1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemOutlineViewDataSource.h; sourceTree = "<group>"; };
 		56D1D27F1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemOutlineViewDataSource.m; sourceTree = "<group>"; };
@@ -90,10 +102,18 @@
 			children = (
 				5632708A19DC170F0035768D /* Document.h */,
 				5632708B19DC170F0035768D /* Document.m */,
-				56C9819319F9093C00C9589B /* TBDevice.h */,
 				5632708D19DC170F0035768D /* Document.xib */,
+				5682BD0C1A2E2AEB00CF08DB /* CodeDocument.h */,
+				5682BD0D1A2E2AEB00CF08DB /* CodeDocument.m */,
+				5682BD121A30682400CF08DB /* QuickLookDocument.h */,
+				5682BD131A30682400CF08DB /* QuickLookDocument.m */,
+				5682BD0F1A2E2B0400CF08DB /* NSViewDocument.h */,
+				5682BD101A2E2B0400CF08DB /* NSViewDocument.m */,
+				56C9819319F9093C00C9589B /* TBDevice.h */,
 				56D1D27E1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.h */,
 				56D1D27F1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m */,
+				564772131A63D9F500498A35 /* NSFileWrapper+QuicklookURL.h */,
+				564772141A63D9F500498A35 /* NSFileWrapper+QuicklookURL.m */,
 				5632709019DC170F0035768D /* Images.xcassets */,
 				5632709219DC17100035768D /* MainMenu.xib */,
 				5632708619DC170F0035768D /* Supporting Files */,
@@ -270,9 +290,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5682BD111A2E2B0400CF08DB /* NSViewDocument.m in Sources */,
 				56D1D2801A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m in Sources */,
+				564772151A63D9F500498A35 /* NSFileWrapper+QuicklookURL.m in Sources */,
 				5632708C19DC170F0035768D /* Document.m in Sources */,
 				5632708919DC170F0035768D /* main.m in Sources */,
+				5682BD0E1A2E2AEB00CF08DB /* CodeDocument.m in Sources */,
+				5682BD141A30682400CF08DB /* QuickLookDocument.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

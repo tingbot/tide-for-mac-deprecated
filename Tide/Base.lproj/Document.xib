@@ -9,6 +9,7 @@
             <connections>
                 <outlet property="codeView" destination="PvK-2Z-x2R" id="ItZ-uF-0RV"/>
                 <outlet property="outlineView" destination="PZM-Uu-fG5" id="vKe-Qf-zUc"/>
+                <outlet property="splitView" destination="LHl-qa-ZCf" id="7Sb-Jq-u0G"/>
                 <outlet property="window" destination="xOd-HO-29H" id="JIz-fz-R2o"/>
             </connections>
         </customObject>
@@ -48,7 +49,7 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <outlineView appearanceType="vibrantLight" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="22" rowSizeStyle="small" indentationPerLevel="14" autoresizesOutlineColumn="YES" outlineTableColumn="5Nm-rV-Dzx" id="PZM-Uu-fG5">
-                                            <rect key="frame" x="0.0" y="0.0" width="148" height="22"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="150" height="22"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="0.0"/>
                                             <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -81,11 +82,11 @@
                                     </subviews>
                                     <nil key="backgroundColor"/>
                                 </clipView>
-                                <scroller key="horizontalScroller" hidden="YES" appearanceType="vibrantLight" verticalHuggingPriority="750" horizontal="YES" id="xsu-Js-ZyC">
+                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="xsu-Js-ZyC">
                                     <rect key="frame" x="1" y="119" width="238" height="15"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
-                                <scroller key="verticalScroller" hidden="YES" appearanceType="vibrantLight" verticalHuggingPriority="750" horizontal="NO" id="Wad-ve-kOw">
+                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="Wad-ve-kOw">
                                     <rect key="frame" x="224" y="17" width="15" height="102"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>

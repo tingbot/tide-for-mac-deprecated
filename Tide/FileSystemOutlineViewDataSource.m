@@ -7,7 +7,8 @@
 //
 
 #import "FileSystemOutlineViewDataSource.h"
-#import "FileSystemObject.h"
+
+#import "NSFileWrapper+QuicklookURL.h"
 
 @interface FileSystemOutlineViewDataSource ()
 
@@ -129,7 +130,9 @@
         return NO;
     }
     
-    NSString *str = [self.fileWrapper addFileWrapper:fileWrapper];
+    fileWrapper.quicklookURL = url;
+    
+    [self.fileWrapper addFileWrapper:fileWrapper];
     
     [outlineView reloadData];
 
