@@ -10,4 +10,6 @@
 
 @interface QuickLookDocument : NSViewDocument
 
++ (BOOL)canHandleFileWithExtension:(NSString *)extension;
+
 @end

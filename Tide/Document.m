@@ -19,7 +19,6 @@
 
 @interface Document () <NSOutlineViewDelegate>
 
-@property (weak) IBOutlet ACEView *codeView;
 @property (weak) IBOutlet NSOutlineView *outlineView;
 @property (weak) IBOutlet NSSplitView *splitView;
 
@@ -27,6 +26,7 @@
 @property (strong) NSFileWrapper *fileWrapper;
 @property (strong) FileSystemOutlineViewDataSource *outlineDataSource;
 @property (strong) NSViewDocument *editingDocument;
+@property (strong) NSFileWrapper *editingFileWrapper;
 
 - (void)addQuicklookURLsToFileWrapper:(NSFileWrapper *)fileWrapper baseURL:(NSURL *)baseURL;
 
@@ -47,7 +47,6 @@
     // Add any code here that needs to be executed once the windowController has loaded the document's window.
     self.outlineView.dataSource = self.outlineDataSource;
     self.outlineView.delegate = self;
-    self.codeView.string = self.code;
     
     [self.outlineView registerForDraggedTypes:@[@"public.data"]];
 }
@@ -64,34 +63,21 @@
 
 - (NSFileWrapper *)fileWrapperOfType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
-    self.code = self.codeView.string;
-
-    NSFileWrapper *oldMainWrapper = self.fileWrapper.fileWrappers[@"main.py"];
-    NSFileWrapper *mainWrapper = [[NSFileWrapper alloc] initRegularFileWithContents:
-                                  [self.code dataUsingEncoding:NSUTF8StringEncoding]];
-    mainWrapper.preferredFilename = @"main.py";
-    
-    
-    [self.fileWrapper removeFileWrapper:oldMainWrapper];
-    [self.fileWrapper addFileWrapper:mainWrapper];
-    
     return self.fileWrapper;
 }
 
 - (BOOL)readFromFileWrapper:(NSFileWrapper *)fileWrapper ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
-    NSData *data = [fileWrapper.fileWrappers[@"main.py"] regularFileContents];
-    
-    self.code = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    self.codeView.string = self.code;
-    
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+
     self.outlineDataSource = [[FileSystemOutlineViewDataSource alloc] initWithFileWrapper:fileWrapper];
     self.fileWrapper = fileWrapper;
     self.outlineView.dataSource = self.outlineDataSource;
-    
     self.fileWrapper.quicklookURL = self.fileURL;
     
-    return self.code ? YES : NO;
+    [self.outlineView reloadData];
+    
+    return YES;
 }
 
 #pragma mark NSOutlineViewDelegate
@@ -99,18 +85,15 @@
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification
 {
     NSFileWrapper *fileWrapper = [self.outlineView itemAtRow:self.outlineView.selectedRow];
-    NSError *error = nil;
     
-    self.editingDocument = [[QuickLookDocument alloc] init];
-    BOOL success = [self.editingDocument readFromFileWrapper:fileWrapper
-                                                      ofType:@"public.data"
-                                                       error:&error];
-    
-    if (!success) {
-        NSLog(@"Failed to load editingDocument, %@", error);
+    if (fileWrapper.isRegularFile) {
+        [self saveEditingDocumentChanges];
+        
+        self.editingDocument = [self editingDocumentForFileWrapper:fileWrapper];
+        self.editingFileWrapper = fileWrapper;
+        
+        [self setEditorView:self.editingDocument.view];
     }
-    
-    [self setEditorView:self.editingDocument.view];
 }
 
 #pragma mark Private
@@ -121,6 +104,80 @@
     
     self.splitView.subviews = @[ outlineView, view ];
     [self.splitView adjustSubviews];
+}
+
+- (NSViewDocument *)editingDocumentForFileWrapper:(NSFileWrapper *)fileWrapper
+{
+    NSViewDocument *result;
+    
+    if ([QuickLookDocument canHandleFileWithExtension:fileWrapper.filename.pathExtension]) {
+        result = [[QuickLookDocument alloc] init];
+    } else {
+        result = [[CodeDocument alloc] init];
+    }
+    
+    NSError *error;
+    
+    BOOL success = [result readFromFileWrapper:fileWrapper ofType:@"public.data" error:&error];
+    
+    if (!success) {
+        NSLog(@"Failed to load editingDocument, %@", error);
+        return nil;
+    }
+    
+    return result;
+}
+
+- (NSFileWrapper *)parentOfFileWrapper:(NSFileWrapper *)target usingRoot:(NSFileWrapper *)root
+{
+    for (NSFileWrapper *fileWrapper in root.fileWrappers) {
+        if (fileWrapper == target) {
+            return root;
+        }
+        
+        NSFileWrapper *parent = [self parentOfFileWrapper:target usingRoot:fileWrapper];
+        
+        if (parent) {
+            return parent;
+        }
+    }
+    
+    return nil;
+}
+
+- (void)saveEditingDocumentChanges
+{
+    if (!self.editingDocument.documentEdited) {
+        return;
+    }
+    
+    NSFileWrapper *parent = [self.outlineView parentForItem:self.editingFileWrapper];
+    
+    if (!parent) {
+        NSLog(@"Failed to save changes to %@. Couldn't get parent. %s",
+              self.editingFileWrapper.filename, __PRETTY_FUNCTION__);
+        return;
+    }
+    
+    NSError *error = nil;
+    
+    NSFileWrapper *oldFileWrapper = self.editingFileWrapper;
+    NSFileWrapper *newFileWrapper = [self.editingDocument fileWrapperOfType:@"public.data"
+                                                                      error:&error];
+    
+    if (!newFileWrapper) {
+        NSLog(@"Failed to save changes to %@. %@ %s",
+              self.editingFileWrapper.filename, error, __PRETTY_FUNCTION__);
+        return;
+    }
+    
+    newFileWrapper.preferredFilename = oldFileWrapper.filename;
+    newFileWrapper.filename = oldFileWrapper.filename;
+    
+    [parent removeFileWrapper:oldFileWrapper];
+    [parent addFileWrapper:newFileWrapper];
+    
+    [self.outlineView reloadItem:parent reloadChildren:YES];
 }
 
 @end

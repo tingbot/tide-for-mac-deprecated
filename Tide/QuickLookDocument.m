@@ -23,6 +23,27 @@
 
 @dynamic view;
 
++ (BOOL)canHandleFileWithExtension:(NSString *)extension
+{
+    
+    static NSSet *supportedExtensions = nil;
+    
+    if (!supportedExtensions) {
+        supportedExtensions = [NSSet setWithArray:@[ @"jpg",
+                                                     @"jpeg",
+                                                     @"png",
+                                                     @"mpg",
+                                                     @"bmp",
+                                                     @"gif",
+                                                     @"m4v",
+                                                     @"pdf",
+                                                     @"tiff",
+                                                     @"psd", ]];
+    }
+    
+    return [supportedExtensions containsObject:extension];
+}
+
 - (void)loadView
 {
     self.view = [[QLPreviewView alloc] initWithFrame:NSZeroRect style:QLPreviewViewStyleNormal];
@@ -32,8 +53,6 @@
 
 - (BOOL)readFromFileWrapper:(NSFileWrapper *)fileWrapper ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
-    
-    
     self.fileWrapper = fileWrapper;
     return YES;
 }

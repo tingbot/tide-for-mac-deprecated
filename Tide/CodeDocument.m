@@ -9,7 +9,7 @@
 #import "CodeDocument.h"
 #import <ACEView.h>
 
-@interface CodeDocument ()
+@interface CodeDocument () <ACEViewDelegate>
 
 @property (strong, nonatomic) ACEView *view;
 
@@ -19,6 +19,11 @@
 
 @dynamic view;
 
+- (void)dealloc
+{
+    self.view.delegate = nil;
+}
+
 - (void)loadView
 {
     self.view = [[ACEView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
@@ -26,6 +31,7 @@
     
     self.view.mode = ACEModePython;
     self.view.theme = ACEThemeMonokai;
+    self.view.delegate = self;
 }
 
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError
@@ -47,6 +53,13 @@
     
     self.view.string = string;
     return YES;
+}
+
+#pragma mark ACEViewDelegate
+
+- (void)textDidChange:(NSNotification *)notification
+{
+    [self updateChangeCount:NSChangeDone];
 }
 
 @end
