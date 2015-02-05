@@ -14,6 +14,7 @@
 #import "CodeDocument.h"
 #import "QuickLookDocument.h"
 #import "NSFileWrapper+QuicklookURL.h"
+#import "SimulatorDevice.h"
 
 @import Quartz;
 
@@ -21,6 +22,7 @@
 
 @property (weak) IBOutlet NSOutlineView *outlineView;
 @property (weak) IBOutlet NSSplitView *splitView;
+@property (weak) IBOutlet NSPopUpButton *runDestinationDropdown;
 
 @property (strong) NSString *code;
 @property (strong) NSFileWrapper *fileWrapper;
@@ -63,13 +65,13 @@
 
 - (NSFileWrapper *)fileWrapperOfType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
+    [self saveEditingDocumentChanges];
+    
     return self.fileWrapper;
 }
 
 - (BOOL)readFromFileWrapper:(NSFileWrapper *)fileWrapper ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-
     self.outlineDataSource = [[FileSystemOutlineViewDataSource alloc] initWithFileWrapper:fileWrapper];
     self.fileWrapper = fileWrapper;
     self.outlineView.dataSource = self.outlineDataSource;
@@ -78,6 +80,33 @@
     [self.outlineView reloadData];
     
     return YES;
+}
+
+#pragma mark UI Callbacks
+
+- (IBAction)runButtonPressed:(id)sender {
+    NSString *runDirectory = [NSTemporaryDirectory() stringByAppendingString:[[NSUUID UUID] UUIDString]];
+    NSURL *runDirectoryURL = [NSURL fileURLWithPath:runDirectory];
+    
+    NSError *error = nil;
+    
+    [self saveEditingDocumentChanges];
+    
+    [self.fileWrapper writeToURL:runDirectoryURL options:0 originalContentsURL:nil error:&error];
+    
+    long deviceIndex = self.runDestinationDropdown.indexOfSelectedItem;
+    Device *device = nil;
+    
+    switch (deviceIndex) {
+        case 0:
+            // simulator
+            device = [SimulatorDevice new];
+            break;
+        default:
+            break;
+    }
+    
+    [device runCodeInFolder:runDirectory];
 }
 
 #pragma mark NSOutlineViewDelegate
@@ -154,14 +183,14 @@
     NSFileWrapper *parent = [self.outlineView parentForItem:self.editingFileWrapper];
     
     if (!parent) {
-        NSLog(@"Failed to save changes to %@. Couldn't get parent. %s",
-              self.editingFileWrapper.filename, __PRETTY_FUNCTION__);
-        return;
+        parent = self.fileWrapper;
     }
     
     NSError *error = nil;
     
-    NSFileWrapper *oldFileWrapper = self.editingFileWrapper;
+    NSString *filename = self.editingFileWrapper.filename;
+    
+    NSFileWrapper *oldFileWrapper = parent.fileWrappers[filename];
     NSFileWrapper *newFileWrapper = [self.editingDocument fileWrapperOfType:@"public.data"
                                                                       error:&error];
     
@@ -171,13 +200,17 @@
         return;
     }
     
-    newFileWrapper.preferredFilename = oldFileWrapper.filename;
-    newFileWrapper.filename = oldFileWrapper.filename;
+    newFileWrapper.preferredFilename = filename;
+    newFileWrapper.filename = filename;
     
     [parent removeFileWrapper:oldFileWrapper];
     [parent addFileWrapper:newFileWrapper];
     
-    [self.outlineView reloadItem:parent reloadChildren:YES];
+    if (parent == self.fileWrapper) {
+        [self.outlineView reloadItem:nil reloadChildren:YES];
+    } else {
+        [self.outlineView reloadItem:parent reloadChildren:YES];
+    }
 }
 
 @end
