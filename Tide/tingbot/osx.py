@@ -44,3 +44,14 @@ def fixup_window():
     frame.origin.x += 64
     frame.origin.y += 65
     screen_window.setFrame_display_(frame, False)
+    
+    from Cocoa import NSNotificationCenter
+    
+    def window_did_close(notification):
+        app.terminate_(None)
+
+    NSNotificationCenter.defaultCenter().addObserverForName_object_queue_usingBlock_(
+        "NSWindowDidCloseNotification",
+        image_window,
+        None,
+        window_did_close)
