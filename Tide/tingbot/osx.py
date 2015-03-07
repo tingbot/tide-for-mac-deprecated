@@ -38,6 +38,7 @@ def fixup_window():
     image_window.makeKeyAndOrderFront_(None)
 
     image_window.addChildWindow_ordered_(screen_window, 1)
+    image_window.setReleasedWhenClosed_(False)
 
     frame = screen_window.frame()
     frame.origin = image_window.frame().origin
