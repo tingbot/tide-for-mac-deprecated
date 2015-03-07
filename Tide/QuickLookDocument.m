@@ -42,7 +42,7 @@
                                                      @"ttf" ]];
     }
     
-    return [supportedExtensions containsObject:extension];
+    return [supportedExtensions containsObject:extension.lowercaseString];
 }
 
 - (void)loadView

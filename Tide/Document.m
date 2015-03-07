@@ -141,8 +141,17 @@
     
     if ([QuickLookDocument canHandleFileWithExtension:fileWrapper.filename.pathExtension]) {
         result = [[QuickLookDocument alloc] init];
-    } else {
+    } else if ([CodeDocument canHandleFileWithExtension:fileWrapper.filename.pathExtension]) {
         result = [[CodeDocument alloc] init];
+    } else {
+        // is it UTF8 text? if so use the code editor. Otherwise, quick look.
+        NSString *text = [[NSString alloc] initWithData:fileWrapper.regularFileContents
+                                               encoding:NSUTF8StringEncoding];
+        if (text) {
+            result = [[CodeDocument alloc] init];
+        } else {
+            result = [[QuickLookDocument alloc] init];
+        }
     }
     
     NSError *error;

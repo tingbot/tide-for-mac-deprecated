@@ -19,6 +19,14 @@
 
 @dynamic view;
 
++ (BOOL)canHandleFileWithExtension:(NSString *)extension
+{
+    return [@[ @"py",
+               @"txt",
+               @"json",
+               @"xml" ] containsObject:extension.lowercaseString];
+}
+
 - (void)dealloc
 {
     self.view.delegate = nil;

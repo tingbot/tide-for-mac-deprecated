@@ -10,4 +10,6 @@
 
 @interface CodeDocument : NSViewDocument
 
++ (BOOL)canHandleFileWithExtension:(NSString *)extension;
+
 @end
