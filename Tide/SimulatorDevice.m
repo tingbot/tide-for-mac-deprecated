@@ -10,13 +10,13 @@
 
 @implementation SimulatorDevice
 
-- (void)runCodeInFolder:(NSString *)folder
+- (void)run:(NSString *)path;
 {
     NSString *pathToTingbotLibrary = [[NSBundle mainBundle] pathForResource:@"tingbot" ofType:@""];
     
     NSTask *task = [NSTask new];
     
-    task.currentDirectoryPath = folder;
+    task.currentDirectoryPath = path;
     task.environment = @{ @"PYTHONPATH": pathToTingbotLibrary.stringByDeletingLastPathComponent };
     task.launchPath = @"/usr/bin/python";
     task.arguments = @[ @"-c", @"import main, tingbot; tingbot.run(main)" ];

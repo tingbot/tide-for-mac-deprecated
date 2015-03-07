@@ -10,7 +10,7 @@
 
 @implementation Device
 
-- (void)runCodeInFolder:(NSString *)folder
+- (void)run:(NSString *)path;
 {
     NSAssert(false, @"subclasses must override");
 }

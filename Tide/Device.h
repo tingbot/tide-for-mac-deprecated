@@ -10,6 +10,6 @@
 
 @interface Device : NSObject
 
-- (void)runCodeInFolder:(NSString *)folder;
+- (void)run:(NSString *)path;
 
 @end
