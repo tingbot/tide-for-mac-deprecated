@@ -38,7 +38,8 @@
                                                      @"m4v",
                                                      @"pdf",
                                                      @"tiff",
-                                                     @"psd", ]];
+                                                     @"psd",
+                                                     @"ttf" ]];
     }
     
     return [supportedExtensions containsObject:extension];
