@@ -10,18 +10,22 @@
 
 @implementation SimulatorDevice
 
-- (void)run:(NSString *)path;
++ (BOOL)canInstall
 {
-    NSString *pathToTingbotLibrary = [[NSBundle mainBundle] pathForResource:@"tingbot" ofType:@""];
-    
+    return NO;
+}
+
+- (NSFileHandle *)run:(NSString *)path error:(NSError *__autoreleasing *)error
+{
     NSTask *task = [NSTask new];
     
-    task.currentDirectoryPath = path;
-    task.environment = @{ @"PYTHONPATH": pathToTingbotLibrary.stringByDeletingLastPathComponent };
-    task.launchPath = @"/usr/bin/python";
-    task.arguments = @[ @"-c", @"import main, tingbot; tingbot.run(main)" ];
+    task.launchPath = [[NSBundle mainBundle] pathForResource:@"tbtool" ofType:@""];
+    task.arguments = @[ @"simulate", path ];
+    NSPipe *taskStdout = task.standardOutput = [NSPipe pipe];
     
     [task launch];
+    
+    return [taskStdout fileHandleForReading];
 }
 
 @end

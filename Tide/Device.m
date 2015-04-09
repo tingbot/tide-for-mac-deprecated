@@ -10,7 +10,19 @@
 
 @implementation Device
 
-- (void)run:(NSString *)path;
++ (BOOL)canInstall
+{
+    NSAssert(false, @"subclasses must override");
+    return NO;
+}
+
+- (NSFileHandle *)run:(NSString *)path error:(NSError **)error
+{
+    NSAssert(false, @"subclasses must override");
+    return nil;
+}
+
+- (void)install:(NSString *)path
 {
     NSAssert(false, @"subclasses must override");
 }

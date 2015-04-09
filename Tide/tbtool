@@ -1,0 +1,120 @@
+#!/usr/bin/env python
+
+from docopt import docopt
+import sys, os, textwrap, uuid, datetime
+import subprocess
+
+def open_ssh_session(hostname):
+    control_path = '/tmp/tide-ssh-control-{uuid}@{t.hour}:{t.minute}'.format(
+        uuid=uuid.uuid1(), 
+        t=datetime.time())
+
+    subprocess.check_call([
+        'ssh', 
+        '-nNf', 
+        '-o', 'ControlMaster=yes',
+        '-o', 'ControlPath=%s' % control_path,
+        'pi@%s' % hostname])
+
+    return control_path
+
+def close_ssh_session(control_path):
+    subprocess.check_call([
+        'ssh',
+        '-o', 'ControlPath=%s' % control_path,
+        '-O', 'exit',
+        'pi@%s' % hostname])
+
+
+def simulate(app_path):
+    python_path = os.path.dirname(__file__)
+
+    environment = os.environ.copy()
+    environment['PYTHONPATH'] = python_path
+
+    main_file = os.path.abspath(os.path.join(app_path, 'main'))
+
+    os.chdir(app_path)
+    
+    if os.path.exists(main_file):
+        os.execvpe(main_file, [main_file], environment)
+    else:
+        os.execvpe('python', ['python', '-c', 'import main, tingbot; tingbot.run(main)'], environment)
+
+
+def run(app_path, hostname):
+    control_path = open_ssh_session(hostname)
+
+    try:
+        app_name = os.path.basename(app_path)
+
+        app_install_location = '/tmp/tide/%s' % app_name
+
+        subprocess.check_call([
+            'rsync',
+            '--recursive',
+            '--perms', 
+            '--links', '--safelinks',
+            '--delete',
+            '-e', 'ssh ControlPath=%s' % control_path,
+            app_path,
+            'pi@%s:%s' % (hostname, app_install_location)])
+
+        subprocess.check_call([
+            'ssh',
+            '-o', 'ControlPath=%s' % control_path,
+            'pi@%s' % hostname,
+            'tbopen %s' % app_name])
+    finally:
+        close_ssh_session(control_path)
+
+
+def install(app_path, hostname):
+    control_path = open_ssh_session(hostname)
+
+    try:
+        app_name = os.path.basename(app_path)
+
+        app_install_location = '/apps/%s' % app_name
+
+        subprocess.check_call([
+            'rsync',
+            '--recursive',
+            '--perms', 
+            '--links', '--safelinks',
+            '--delete',
+            '-e', 'ssh ControlPath=%s' % control_path,
+            app_path,
+            'pi@%s:%s' % (hostname, app_install_location)])
+
+        subprocess.check_call([
+            'ssh',
+            '-o', 'ControlPath=%s' % control_path,
+            'pi@%s' % hostname,
+            'tbopen /apps/home'])
+    finally:
+        close_ssh_session(control_path)
+
+
+def main():
+    args = docopt(textwrap.dedent('''
+        Usage: tbtool simulate <app>  
+               tbtool run <app> <hostname>
+               tbtool install <app> <hostname>
+        '''))
+
+    # simulate: Runs an app in the tingbot simulator (must be a python app).  
+    # run: Runs an app on the tingbot specified by <hostname>, without installing.
+    # install: Installs an app on the tingbot specified
+
+    print locals()
+    
+    if args['simulate']:
+        return simulate(args['<app>'])
+    elif args['run']:
+        return run(args['<app>'], args['<hostname>'])
+    elif args['install']:
+        return install(args['<app>'], args['<hostname>'])
+
+if __name__ == '__main__':
+    main()

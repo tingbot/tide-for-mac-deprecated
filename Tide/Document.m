@@ -15,22 +15,23 @@
 #import "QuickLookDocument.h"
 #import "NSFileWrapper+QuicklookURL.h"
 #import "SimulatorDevice.h"
+#import "ConsoleView.h"
 
 @import Quartz;
 
-@interface Document () <NSOutlineViewDelegate>
+@interface Document () <NSOutlineViewDelegate, NSSplitViewDelegate>
 
 @property (weak) IBOutlet NSOutlineView *outlineView;
-@property (weak) IBOutlet NSSplitView *splitView;
 @property (weak) IBOutlet NSPopUpButton *runDestinationDropdown;
+@property (weak) IBOutlet NSSplitView *verticalSplitView;
+@property (weak) IBOutlet NSSplitView *horizontalSplitView;
 
 @property (strong) NSString *code;
 @property (strong) NSFileWrapper *fileWrapper;
 @property (strong) FileSystemOutlineViewDataSource *outlineDataSource;
 @property (strong) NSViewDocument *editingDocument;
 @property (strong) NSFileWrapper *editingFileWrapper;
-
-- (void)addQuicklookURLsToFileWrapper:(NSFileWrapper *)fileWrapper baseURL:(NSURL *)baseURL;
+@property (weak) IBOutlet ConsoleView *consoleView;
 
 @end
 
@@ -49,6 +50,7 @@
     // Add any code here that needs to be executed once the windowController has loaded the document's window.
     self.outlineView.dataSource = self.outlineDataSource;
     self.outlineView.delegate = self;
+    [self.verticalSplitView setPosition:self.verticalSplitView.bounds.size.height ofDividerAtIndex:0];
     
     [self.outlineView registerForDraggedTypes:@[@"public.data"]];
 }
@@ -106,7 +108,48 @@
             break;
     }
     
-    [device runCodeInFolder:runDirectory];
+    NSFileHandle *consoleFD = [device run:runDirectory error:&error];
+    self.consoleView.fileHandleToRead = consoleFD;
+    
+    if ([self.verticalSplitView isSubviewCollapsed:self.consoleView]) {
+        [self.verticalSplitView setPosition:self.verticalSplitView.bounds.size.height * 4.0/5.0
+                           ofDividerAtIndex:0];
+    }
+}
+
+#pragma mark NSSplitViewDelegate
+
+- (BOOL)splitView:(NSSplitView *)splitView canCollapseSubview:(NSView *)subview
+{
+    if (subview == self.consoleView) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
+- (BOOL)splitView:(NSSplitView *)splitView shouldCollapseSubview:(NSView *)subview forDoubleClickOnDividerAtIndex:(NSInteger)dividerIndex
+{
+    if (subview == self.consoleView) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
+- (CGFloat)splitView:(NSSplitView *)splitView constrainMinCoordinate:(CGFloat)proposedMinimumPosition ofSubviewAt:(NSInteger)dividerIndex
+{
+    return 100.0;
+}
+
+- (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMaximumPosition ofSubviewAt:(NSInteger)dividerIndex
+{
+    if (splitView == self.verticalSplitView) {
+        // the console should not be smaller than 100px high
+        return splitView.bounds.size.height - 100;
+    }
+    
+    return proposedMaximumPosition;
 }
 
 #pragma mark NSOutlineViewDelegate
@@ -129,10 +172,12 @@
 
 - (void)setEditorView:(NSView *)view
 {
-    NSView *outlineView = self.splitView.subviews[0];
+    NSView *oldEditorView = self.horizontalSplitView.subviews[1];
     
-    self.splitView.subviews = @[ outlineView, view ];
-    [self.splitView adjustSubviews];
+    view.frame = oldEditorView.frame;
+    
+    [self.horizontalSplitView replaceSubview:oldEditorView with:view];
+    [self.horizontalSplitView adjustSubviews];
 }
 
 - (NSViewDocument *)editingDocumentForFileWrapper:(NSFileWrapper *)fileWrapper

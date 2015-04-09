@@ -1,10 +1,25 @@
 PODS:
   - ACEView (0.0.4)
+  - ANSIEscapeHelper (0.9.6)
+  - Masonry (0.6.1)
 
 DEPENDENCIES:
   - ACEView (~> 0.0.4)
+  - ANSIEscapeHelper (from `https://github.com/griffin-stewie/ANSIEscapeHelper.git`)
+  - Masonry
+
+EXTERNAL SOURCES:
+  ANSIEscapeHelper:
+    :git: https://github.com/griffin-stewie/ANSIEscapeHelper.git
+
+CHECKOUT OPTIONS:
+  ANSIEscapeHelper:
+    :commit: d2f4a468a3088b92722241f0b5afc1eeebcefa80
+    :git: https://github.com/griffin-stewie/ANSIEscapeHelper.git
 
 SPEC CHECKSUMS:
-  ACEView: 29f763cac487994110ce855b4daf6f35361fd379
+  ACEView: 3b0192c9b284f7196f0356ed6e02bd6eb332a24e
+  ANSIEscapeHelper: 1b77fd775487531a476bc7a75c080068ad78ff9f
+  Masonry: 4972309f2f134de9dd312f4dc4a21359b50e6caa
 
-COCOAPODS: 0.33.1
+COCOAPODS: 0.36.0
