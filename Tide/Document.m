@@ -53,6 +53,7 @@
     [self.verticalSplitView setPosition:self.verticalSplitView.bounds.size.height ofDividerAtIndex:0];
     
     [self.outlineView registerForDraggedTypes:@[@"public.data"]];
+    [self.outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
 }
 
 + (BOOL)autosavesInPlace {
@@ -78,8 +79,6 @@
     self.fileWrapper = fileWrapper;
     self.outlineView.dataSource = self.outlineDataSource;
     self.fileWrapper.quicklookURL = self.fileURL;
-    
-    [self.outlineView reloadData];
     
     return YES;
 }
