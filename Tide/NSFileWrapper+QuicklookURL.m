@@ -23,7 +23,7 @@
     
     NSString *filePath = quicklookURL.path;
     
-    if (self.isDirectory) {
+    if (quicklookURL && self.isDirectory) {
         for (NSString *childFilename in self.fileWrappers) {
             NSFileWrapper *child = self.fileWrappers[childFilename];
             NSString *childPath = [filePath stringByAppendingPathComponent:childFilename];

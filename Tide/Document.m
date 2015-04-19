@@ -41,11 +41,27 @@
 
 @implementation Document
 
-- (instancetype)init {
-    self = [super init];
+- (instancetype)initWithType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
+{
+    self = [super initWithType:typeName error:outError];
+    
     if (self) {
-        // Add your subclass-specific initialization here.
+        NSURL *url = [[NSBundle mainBundle] URLForResource:@"default" withExtension:@"tingapp"];
+        NSFileWrapper *fileWrapper = [[NSFileWrapper alloc] initWithURL:url
+                                                                options:NSFileWrapperReadingImmediate
+                                                                  error:outError];
+        
+        if (!fileWrapper) {
+            return nil;
+        }
+        
+        BOOL success = [self readFromFileWrapper:fileWrapper ofType:typeName error:outError];
+        
+        if (!success) {
+            return nil;
+        }
     }
+    
     return self;
 }
 
@@ -202,7 +218,7 @@
         if (![existingDevices containsObject:device]) {
             [self.runDestinationDropdown addItemWithTitle:device.name];
             self.runDestinationDropdown.lastItem.representedObject = device;
-
+            
             NSImage *image = device.image;
             
             image.size = CGSizeMake(16, 16);
