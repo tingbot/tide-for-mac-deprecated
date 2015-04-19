@@ -8,6 +8,8 @@
 
 #import "NetworkDevice.h"
 
+#import <Cocoa/Cocoa.h>
+
 @implementation NetworkDevice
 
 - (instancetype)initWithHostname:(NSString *)hostname
@@ -52,6 +54,11 @@
 - (NSString *)name
 {
     return _hostname;
+}
+
+- (NSImage *)image
+{
+    return [NSImage imageNamed:NSImageNameNetwork];
 }
 
 - (BOOL)isEqual:(id)object

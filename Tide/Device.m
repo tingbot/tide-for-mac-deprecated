@@ -33,4 +33,10 @@
     return nil;
 }
 
+- (NSImage *)image
+{
+    NSAssert(false, @"subclasses must override");
+    return nil;
+}
+
 @end

@@ -8,6 +8,8 @@
 
 #import "SimulatorDevice.h"
 
+#import <Cocoa/Cocoa.h>
+
 @implementation SimulatorDevice
 
 + (BOOL)canInstall
@@ -31,6 +33,11 @@
 - (NSString *)name
 {
     return @"Tingbot Simulator";
+}
+
+- (NSImage *)image
+{
+    return [NSImage imageNamed:NSImageNameComputer];
 }
 
 - (BOOL)isEqual:(id)object

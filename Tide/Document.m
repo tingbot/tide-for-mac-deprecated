@@ -202,8 +202,15 @@
         if (![existingDevices containsObject:device]) {
             [self.runDestinationDropdown addItemWithTitle:device.name];
             self.runDestinationDropdown.lastItem.representedObject = device;
+
+            NSImage *image = device.image;
+            
+            image.size = CGSizeMake(16, 16);
+            self.runDestinationDropdown.lastItem.image = image;
         }
     }
+    
+    [self.runDestinationDropdown invalidateIntrinsicContentSize];
 }
 
 - (void)setEditorView:(NSView *)view

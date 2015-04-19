@@ -16,5 +16,6 @@
 - (void)install:(NSString *)path;
 
 - (NSString *)name;
+- (NSImage *)image;
 
 @end
