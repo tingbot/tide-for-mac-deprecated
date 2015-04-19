@@ -28,4 +28,18 @@
     return [taskStdout fileHandleForReading];
 }
 
+- (NSString *)name
+{
+    return @"Tingbot Simulator";
+}
+
+- (BOOL)isEqual:(id)object
+{
+    if ([object class] == [SimulatorDevice class]) {
+        return YES;
+    }
+    
+    return NO;
+}
+
 @end

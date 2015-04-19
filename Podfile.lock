@@ -1,11 +1,13 @@
 PODS:
   - ACEView (0.0.4)
   - ANSIEscapeHelper (0.9.6)
+  - KVOController (1.0.3)
   - Masonry (0.6.1)
 
 DEPENDENCIES:
   - ACEView (~> 0.0.4)
   - ANSIEscapeHelper (from `https://github.com/griffin-stewie/ANSIEscapeHelper.git`)
+  - KVOController
   - Masonry
 
 EXTERNAL SOURCES:
@@ -20,6 +22,7 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   ACEView: 3b0192c9b284f7196f0356ed6e02bd6eb332a24e
   ANSIEscapeHelper: 1b77fd775487531a476bc7a75c080068ad78ff9f
+  KVOController: 9fd8f0343670994e4b6f9f0b31f5a45663f3e1cf
   Masonry: 4972309f2f134de9dd312f4dc4a21359b50e6caa
 
 COCOAPODS: 0.36.0

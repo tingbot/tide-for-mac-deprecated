@@ -15,4 +15,6 @@
 - (NSFileHandle *)run:(NSString *)path error:(NSError **)error;
 - (void)install:(NSString *)path;
 
+- (NSString *)name;
+
 @end

@@ -49,4 +49,29 @@
     [task launch];
 }
 
+- (NSString *)name
+{
+    return _hostname;
+}
+
+- (BOOL)isEqual:(id)object
+{
+    if (self == object) {
+        return YES;
+    }
+    
+    if (![object isKindOfClass:[NetworkDevice class]]) {
+        return NO;
+    }
+    
+    return [self isEqualToNetworkDevice:object];
+}
+
+- (BOOL)isEqualToNetworkDevice:(NetworkDevice *)object
+{
+    return [self.hostname isEqualToString:object.hostname];
+}
+
+
+
 @end

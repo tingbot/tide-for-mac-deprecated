@@ -23,6 +23,7 @@
 		5682BD0E1A2E2AEB00CF08DB /* CodeDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5682BD0D1A2E2AEB00CF08DB /* CodeDocument.m */; };
 		5682BD111A2E2B0400CF08DB /* NSViewDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5682BD101A2E2B0400CF08DB /* NSViewDocument.m */; };
 		5682BD141A30682400CF08DB /* QuickLookDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5682BD131A30682400CF08DB /* QuickLookDocument.m */; };
+		56D111241AD9675700C99ACF /* NetworkDeviceDiscoverer.m in Sources */ = {isa = PBXBuildFile; fileRef = 56D111231AD9675700C99ACF /* NetworkDeviceDiscoverer.m */; };
 		56D1D2801A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 56D1D27F1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m */; };
 		56F84F2A1A82D2580011BDFF /* SimulatorDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 56F84F291A82D2580011BDFF /* SimulatorDevice.m */; };
 		56F84F2D1A82D28F0011BDFF /* Device.m in Sources */ = {isa = PBXBuildFile; fileRef = 56F84F2C1A82D28F0011BDFF /* Device.m */; };
@@ -68,6 +69,8 @@
 		5682BD101A2E2B0400CF08DB /* NSViewDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSViewDocument.m; sourceTree = "<group>"; };
 		5682BD121A30682400CF08DB /* QuickLookDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookDocument.h; sourceTree = "<group>"; };
 		5682BD131A30682400CF08DB /* QuickLookDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickLookDocument.m; sourceTree = "<group>"; };
+		56D111221AD9675700C99ACF /* NetworkDeviceDiscoverer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkDeviceDiscoverer.h; sourceTree = "<group>"; };
+		56D111231AD9675700C99ACF /* NetworkDeviceDiscoverer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkDeviceDiscoverer.m; sourceTree = "<group>"; };
 		56D1D27E1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemOutlineViewDataSource.h; sourceTree = "<group>"; };
 		56D1D27F1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemOutlineViewDataSource.m; sourceTree = "<group>"; };
 		56F84F281A82D2580011BDFF /* SimulatorDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimulatorDevice.h; sourceTree = "<group>"; };
@@ -140,6 +143,8 @@
 				56F84F291A82D2580011BDFF /* SimulatorDevice.m */,
 				5629F0101ABF60F000DEBC4F /* NetworkDevice.h */,
 				5629F0111ABF60F000DEBC4F /* NetworkDevice.m */,
+				56D111221AD9675700C99ACF /* NetworkDeviceDiscoverer.h */,
+				56D111231AD9675700C99ACF /* NetworkDeviceDiscoverer.m */,
 				56D1D27E1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.h */,
 				56D1D27F1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m */,
 				564772131A63D9F500498A35 /* NSFileWrapper+QuicklookURL.h */,
@@ -340,6 +345,7 @@
 				564772151A63D9F500498A35 /* NSFileWrapper+QuicklookURL.m in Sources */,
 				56F84F2D1A82D28F0011BDFF /* Device.m in Sources */,
 				5632708C19DC170F0035768D /* Document.m in Sources */,
+				56D111241AD9675700C99ACF /* NetworkDeviceDiscoverer.m in Sources */,
 				5629F00F1AB9CB2900DEBC4F /* File.m in Sources */,
 				56F84F2A1A82D2580011BDFF /* SimulatorDevice.m in Sources */,
 				5629F0121ABF60F000DEBC4F /* NetworkDevice.m in Sources */,

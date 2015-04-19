@@ -7,14 +7,18 @@
 //
 
 #import "Document.h"
-#import <ACEView.h>
-#import "FileSystemOutlineViewDataSource.h"
 
+#import <ACEView.h>
+#import <FBKVOController.h>
+
+#import "FileSystemOutlineViewDataSource.h"
 #import "NSViewDocument.h"
 #import "CodeDocument.h"
 #import "QuickLookDocument.h"
 #import "NSFileWrapper+QuicklookURL.h"
 #import "SimulatorDevice.h"
+#import "NetworkDevice.h"
+#import "NetworkDeviceDiscoverer.h"
 #import "ConsoleView.h"
 
 @import Quartz;
@@ -54,6 +58,15 @@
     
     [self.outlineView registerForDraggedTypes:@[@"public.data"]];
     [self.outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
+    
+    [self.runDestinationDropdown removeAllItems];
+    
+    [self.KVOController observe:[NetworkDeviceDiscoverer sharedInstance]
+                        keyPath:@"devices"
+                        options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial
+                          block:^(id observer, id object, NSDictionary *change) {
+                              [self setNetworkDevices:change[NSKeyValueChangeNewKey]];
+                          }];
 }
 
 + (BOOL)autosavesInPlace {
@@ -95,17 +108,7 @@
     
     [self.fileWrapper writeToURL:runDirectoryURL options:0 originalContentsURL:nil error:&error];
     
-    long deviceIndex = self.runDestinationDropdown.indexOfSelectedItem;
-    Device *device = nil;
-    
-    switch (deviceIndex) {
-        case 0:
-            // simulator
-            device = [SimulatorDevice new];
-            break;
-        default:
-            break;
-    }
+    Device *device = self.runDestinationDropdown.selectedItem.representedObject;
     
     NSFileHandle *consoleFD = [device run:runDirectory error:&error];
     self.consoleView.fileHandleToRead = consoleFD;
@@ -168,6 +171,40 @@
 }
 
 #pragma mark Private
+
+- (void)setNetworkDevices:(NSSet *)networkDevices
+{
+    NSArray *networkDevicesArray = [[networkDevices allObjects] sortedArrayUsingDescriptors:
+                                    @[ [NSSortDescriptor sortDescriptorWithKey:@"hostname" ascending:YES] ]];
+    
+    NSArray *allDevices = [@[ [SimulatorDevice new] ] arrayByAddingObjectsFromArray:networkDevicesArray];
+    
+    [self setDropdownDevices:allDevices];
+}
+
+- (void)setDropdownDevices:(NSArray *)dropdownDevices
+{
+    // remove items no longer in the array
+    for (NSMenuItem *item in self.runDestinationDropdown.itemArray) {
+        if (![dropdownDevices containsObject:item.representedObject]) {
+            if ([self.runDestinationDropdown selectedItem] == item) {
+                item.enabled = NO;
+            } else {
+                [self.runDestinationDropdown removeItemWithTitle:item.title];
+            }
+        }
+    }
+    
+    NSArray *existingDevices = [self.runDestinationDropdown.itemArray valueForKey:@"representedObject"];
+    
+    // add items that are new
+    for (Device *device in dropdownDevices) {
+        if (![existingDevices containsObject:device]) {
+            [self.runDestinationDropdown addItemWithTitle:device.name];
+            self.runDestinationDropdown.lastItem.representedObject = device;
+        }
+    }
+}
 
 - (void)setEditorView:(NSView *)view
 {

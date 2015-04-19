@@ -27,4 +27,10 @@
     NSAssert(false, @"subclasses must override");
 }
 
+- (NSString *)name
+{
+    NSAssert(false, @"subclasses must override");
+    return nil;
+}
+
 @end

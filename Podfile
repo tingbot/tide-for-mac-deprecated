@@ -5,6 +5,7 @@ target "Tide" do
 pod 'ACEView', '~> 0.0.4'
 pod 'Masonry'
 pod 'ANSIEscapeHelper', :git => 'https://github.com/griffin-stewie/ANSIEscapeHelper.git'
+pod 'KVOController'
 end
 
 target "TideTests" do
