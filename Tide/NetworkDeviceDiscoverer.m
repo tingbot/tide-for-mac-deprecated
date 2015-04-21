@@ -41,8 +41,8 @@
     if (self) {
         _browser = [[NSNetServiceBrowser alloc] init];
         _browser.delegate = self;
-//        [_browser searchForServicesOfType:@"_tingbot-ssh._tcp" inDomain:@""];
-        [_browser searchForServicesOfType:@"_afpovertcp._tcp." inDomain:@""];
+        [_browser searchForServicesOfType:@"_tingbot-ssh._tcp" inDomain:@""];
+//        [_browser searchForServicesOfType:@"_afpovertcp._tcp." inDomain:@""];
         self.devices = [NSSet set];
         _resolvingServices = [NSMutableSet set];
     }
