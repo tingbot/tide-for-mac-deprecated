@@ -66,7 +66,7 @@ def run(app_path, hostname):
             '--links', '--safe-links',
             '--delete',
             # '-e', 'ssh -o ControlPath=%s _' % control_path,
-            app_path,
+            app_path + '/',
             'pi@%s:"%s"' % (hostname, app_install_location)])
 
         subprocess.check_call([
