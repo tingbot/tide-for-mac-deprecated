@@ -1,7 +1,12 @@
 import os
 
+
 def fixup_window():
-    from Cocoa import NSApplication, NSWindow, NSImageView, NSImage, NSRect, NSColor
+    try:
+        from Cocoa import NSApplication, NSWindow, NSImageView, NSImage, NSRect, NSColor
+    except ImportError:
+        print 'Skipping OS X window fixup'
+        return
 
     app = NSApplication.sharedApplication()
 
