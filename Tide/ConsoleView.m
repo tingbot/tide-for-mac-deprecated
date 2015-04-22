@@ -49,7 +49,7 @@
 {
     _ansiParser = [[AMR_ANSIEscapeHelper alloc] init];
     _ansiParser.defaultStringColor = [NSColor colorWithWhite:0.9 alpha:1.0];
-    _ansiParser.font = [NSFont fontWithName:@"Monaco" size:12];
+    _ansiParser.font = [NSFont fontWithName:@"Monaco" size:10];
     
     _scrollView = [[NSScrollView alloc] initWithFrame:self.bounds];
     _scrollView.hasVerticalScroller = YES;
@@ -100,6 +100,11 @@
             }
         });
     };
+}
+
+- (void)clear
+{
+    [_textView.textStorage setAttributedString:[[NSAttributedString alloc] init]];
 }
 
 @end

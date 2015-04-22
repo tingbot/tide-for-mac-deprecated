@@ -127,6 +127,7 @@
     Device *device = self.runDestinationDropdown.selectedItem.representedObject;
     
     NSFileHandle *consoleFD = [device run:runDirectory error:&error];
+    [self.consoleView clear];
     self.consoleView.fileHandleToRead = consoleFD;
     
     if ([self.verticalSplitView isSubviewCollapsed:self.consoleView]) {

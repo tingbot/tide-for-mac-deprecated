@@ -13,4 +13,6 @@
 @property (strong, nonatomic) NSFileHandle *fileHandleToRead;
 @property (assign) BOOL visible;
 
+- (void)clear;
+
 @end
