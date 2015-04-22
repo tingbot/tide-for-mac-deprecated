@@ -6,8 +6,11 @@ import sys
 
 class Tingbot:
     import error
-    import osx
+    from . import platform_specific
+
     def __init__(self):
+        platform_specific.fixup_env()
+        
         self.loops_per_second = 30
 
         self.plugins = [self.screen, self.input]
@@ -27,15 +30,12 @@ class Tingbot:
     def run(self, app):
         import time
         import sys
-        # from . import error
+
         self.plugins.append(app)
 
         for plugin in self.plugins:
             if hasattr(plugin, 'setup'):
                 plugin.setup()
-
-        # import tingbot.osx
-        self.osx.fixup_window()
 
         while True:
             try:

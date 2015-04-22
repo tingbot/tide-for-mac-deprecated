@@ -3,6 +3,7 @@ import numbers
 import operator
 import itertools
 import os
+from . import platform_specific
 
 color_map = {
     'white': (255,255,255),
@@ -108,6 +109,8 @@ class Screen(Surface):
         pygame.font.init()
 
         surface = pygame.display.set_mode((320, 240))
+
+        platform_specific.fixup_window()
 
         super(Screen, self).__init__(surface)
 
