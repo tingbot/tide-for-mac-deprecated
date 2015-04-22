@@ -12,7 +12,7 @@ def open_ssh_session(hostname):
 
     subprocess.check_call([
         'ssh',
-        '-nNfv',
+        '-nNf4',
         '-o', 'ControlMaster=yes',
         '-o', 'ControlPath=%s' % control_path,
         'pi@%s' % hostname])
