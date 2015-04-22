@@ -12,7 +12,7 @@ def open_ssh_session(hostname):
 
     subprocess.check_call([
         'ssh',
-        '-nNf',
+        '-nNfv',
         '-o', 'ControlMaster=yes',
         '-o', 'ControlPath=%s' % control_path,
         'pi@%s' % hostname])
@@ -45,19 +45,25 @@ def simulate(app_path):
 
 
 def run(app_path, hostname):
-    # control_path = open_ssh_session(hostname)
+    print 'Connecting to Pi...'
+
+    control_path = open_ssh_session(hostname)
 
     try:
         app_name = os.path.basename(app_path)
 
         app_install_location = '/tmp/tide/%s' % app_name
         app_install_folder = os.path.dirname(app_install_location)
+        
+        print 'Setting up Pi...'
 
         subprocess.check_call([
             'ssh',
-            # '-o', 'ControlPath=%s' % control_path,
+            '-o', 'ControlPath=%s' % control_path,
             'pi@%s' % hostname,
             'mkdir -p %s' % app_install_folder])
+
+        print 'Copying app to %s...' % app_install_location
 
         subprocess.check_call([
             'rsync',
@@ -65,15 +71,19 @@ def run(app_path, hostname):
             '--perms',
             '--links', '--safe-links',
             '--delete',
-            # '-e', 'ssh -o ControlPath=%s _' % control_path,
+            '-e', 'ssh -o ControlPath=%s' % control_path,
             app_path + '/',
             'pi@%s:"%s"' % (hostname, app_install_location)])
 
+        print 'Starting app...'
+
         subprocess.check_call([
             'ssh',
-            # '-o', 'ControlPath=%s' % control_path,
+            '-o', 'ControlPath=%s' % control_path,
             'pi@%s' % hostname,
             'tbopen "%s"' % app_install_location])
+    
+        print 'App started'
     finally:
         pass
     #     close_ssh_session(control_path)
@@ -93,7 +103,7 @@ def install(app_path, hostname):
             '--perms',
             '--links', '--safe-links',
             '--delete',
-            '-e', 'ssh ControlPath=%s' % control_path,
+            '-e', 'ssh -o ControlPath=%s' % control_path,
             app_path,
             'pi@%s:%s' % (hostname, app_install_location)])
 
