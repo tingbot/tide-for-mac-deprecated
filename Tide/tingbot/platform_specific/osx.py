@@ -61,3 +61,13 @@ def fixup_window():
         image_window,
         None,
         window_did_close)
+
+
+def fixup_env():
+    from pygame import sdlmain_osx
+    
+    icon_file = os.path.join(os.path.dirname(__file__), 'simulator-icon.png')
+    with open(icon_file) as f:
+        icon_data = f.read()
+
+    sdlmain_osx.InstallNSApplication(icon_data)
