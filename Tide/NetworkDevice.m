@@ -60,7 +60,7 @@
 
 - (NSImage *)image
 {
-    return [NSImage imageNamed:NSImageNameNetwork];
+    return [NSImage imageNamed:@"Tingbot16"];
 }
 
 - (BOOL)isEqual:(id)object
