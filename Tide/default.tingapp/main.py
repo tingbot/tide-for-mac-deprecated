@@ -6,3 +6,6 @@ def setup():
 
 def loop():
     pass
+
+import sys
+tingbot.run(sys.modules[__name__])
