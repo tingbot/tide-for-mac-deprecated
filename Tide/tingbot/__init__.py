@@ -53,6 +53,7 @@ class Tingbot:
                     if hasattr(plugin, 'after_loop'):
                         plugin.after_loop()
             except Exception as e:
+                print e
                 import traceback; traceback.print_exc();
 
                 self.error.error_screen(self.screen, sys.exc_info())
