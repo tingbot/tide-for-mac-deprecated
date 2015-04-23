@@ -89,6 +89,15 @@ class Surface(object):
 
         self.image(text_image, xy, align=align)
 
+    def rectangle(self, xy, size, color, align='topleft'):
+        if len(size) != 2:
+            raise ValueError('size should be a 2-tuple')
+
+        anchor_offset = _xy_multiply(_anchor(align), size)
+        xy = _xy_subtract(xy, anchor_offset)
+    
+        self.surface.fill(_color(color), xy+size)
+
     def image(self, image, xy, scale=1, align='topleft'):
         scale = _scale(scale)
         image_dimensions = image.size
