@@ -137,6 +137,12 @@ class Screen(Surface):
 
 
 class Image(Surface):
+    @classmethod
+    def load(cls, filename):
+        surface = pygame.image.load(filename)
+        surface = surface.convert_alpha()
+        return cls(surface)
+    
     def __init__(self, surface=None, size=None):
         surface = surface or pygame.Surface(size)
         super(Image, self).__init__(surface)
