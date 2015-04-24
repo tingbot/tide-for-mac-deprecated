@@ -35,11 +35,13 @@
     task.launchPath = [[NSBundle mainBundle] pathForResource:@"tbtool" ofType:@""];
     task.arguments = @[ @"run", path, _hostname ];
     task.environment = @{ @"PYTHONUNBUFFERED": @"1" };
-    NSPipe *taskStdout = task.standardOutput = [NSPipe pipe];
+
+    NSPipe *taskOutput = [NSPipe pipe];
+    task.standardOutput = task.standardError = taskOutput;
     
     [task launch];
     
-    return [taskStdout fileHandleForReading];
+    return [taskOutput fileHandleForReading];
 }
 
 - (void)install:(NSString *)path

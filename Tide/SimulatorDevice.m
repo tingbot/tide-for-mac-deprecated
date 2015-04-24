@@ -23,11 +23,13 @@
     
     task.launchPath = [[NSBundle mainBundle] pathForResource:@"tbtool" ofType:@""];
     task.arguments = @[ @"simulate", path ];
-    NSPipe *taskStdout = task.standardOutput = [NSPipe pipe];
+
+    NSPipe *taskOutput = [NSPipe pipe];
+    task.standardOutput = task.standardError = taskOutput;
     
     [task launch];
     
-    return [taskStdout fileHandleForReading];
+    return [taskOutput fileHandleForReading];
 }
 
 - (NSString *)name
