@@ -8,6 +8,9 @@
 
 #import "NetworkDeviceDiscoverer.h"
 
+#import <sys/socket.h>
+#include <arpa/inet.h>
+
 #import "NetworkDevice.h"
 
 @interface NetworkDeviceDiscoverer () <NSNetServiceBrowserDelegate, NSNetServiceDelegate>
@@ -64,8 +67,25 @@
     if (!_newDevices) {
         _newDevices = [NSSet set];
     }
+    
+    NSString *ipAddress = nil;
+    
+    for (NSData *sockAddrData in sender.addresses) {
+        const struct sockaddr *addr = sockAddrData.bytes;
+        
+        // only accept IPv4 addresses
+        if (addr->sa_family == AF_INET) {
+            char *ipChars = inet_ntoa(((struct sockaddr_in *)addr)->sin_addr);
+            ipAddress = [NSString stringWithUTF8String:ipChars];
+        }
+    }
+    
+    if (!ipAddress) {
+        NSLog(@"No IPv4 address found for host %@", sender.hostName);
+        return;
+    }
 
-    NetworkDevice *device = [[NetworkDevice alloc] initWithHostname:sender.hostName];
+    NetworkDevice *device = [[NetworkDevice alloc] initWithHostname:ipAddress];
     
     _newDevices = [_newDevices setByAddingObject:device];
     // add to current devices as well so it can be used straight away
@@ -91,13 +111,13 @@
     
     aNetService.delegate = self;
     [aNetService scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
-    [aNetService resolveWithTimeout:5];
+    [aNetService resolveWithTimeout:20];
     [_resolvingServices addObject:aNetService];
     
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(removeOldDevices) object:nil];
 
     if (!moreComing) {
-        [self performSelector:@selector(removeOldDevices) withObject:nil afterDelay:5];
+        [self performSelector:@selector(removeOldDevices) withObject:nil afterDelay:20];
     }
 }
 
