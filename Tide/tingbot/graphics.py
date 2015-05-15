@@ -4,10 +4,13 @@ import operator
 import itertools
 import os
 from . import platform_specific
+from .utils import cached_property
 
 color_map = {
-    'white': (255,255,255),
-    'black': (0,0,0),
+    'white': (255, 255, 255),
+    'grey': (128, 128, 128),
+    'gray': (128, 128, 128),
+    'black': (0, 0, 0),
 }
 
 def _xy_add(t1, t2):
@@ -51,6 +54,11 @@ def _scale(scale):
     else:
         raise TypeError('argument should be a number or a tuple')
 
+def _font(font, font_size):
+    pygame.font.init()
+    if font is None:
+        font = os.path.join(os.path.dirname(__file__), '04B_03__.TTF')
+    return pygame.font.Font(font, font_size)
 
 def _anchor(align):
     mapping = {
@@ -67,12 +75,34 @@ def _anchor(align):
 
     return mapping[align]
 
-class Surface(object):
-    def __init__(self, surface):
-        if not surface:
-            raise TypeError()
+def _xy_from_align(align, surface_size):
+    return _xy_multiply(surface_size, _anchor(align))
 
-        self.surface = surface
+def _topleft_from_aligned_xy(xy, align, size, surface_size):
+    if xy is None:
+        xy = _xy_from_align(align, surface_size)
+
+    anchor_offset = _xy_multiply(_anchor(align), size)
+    return _xy_subtract(xy, anchor_offset)
+
+
+class Surface(object):
+    def __init__(self, surface=None):
+        if surface is None:
+            if not hasattr(self, '_create_surface'):
+                raise TypeError('surface must not be nil')
+        else:
+            self.surface = surface
+
+    @cached_property
+    def surface(self):
+        ''' this function is only called once if a surface is not set in the constructor '''
+        surface = self._create_surface()
+
+        if not surface:
+            raise TypeError('_create_surface should return a pygame Surface')
+
+        return surface
 
     @property
     def size(self):
@@ -81,54 +111,59 @@ class Surface(object):
     def fill(self, color):
         self.surface.fill(_color(color))
 
-    def text(self, string, xy, color, align='topleft', font=None, font_size=32):
-        if font is None:
-            font = os.path.join(os.path.dirname(__file__), '04B_03__.TTF')
-        font = pygame.font.Font(font, font_size)
+    def text(self, string, xy=None, color='grey', align='center', font=None, font_size=32):
+        font = _font(font, font_size)
+        string = str(string)
+
         text_image = Image(surface=font.render(string, 1, _color(color)))
 
         self.image(text_image, xy, align=align)
 
-    def rectangle(self, xy, size, color, align='topleft'):
+    def rectangle(self, xy=None, size=(100, 100), color='grey', align='center'):
         if len(size) != 2:
             raise ValueError('size should be a 2-tuple')
 
-        anchor_offset = _xy_multiply(_anchor(align), size)
-        xy = _xy_subtract(xy, anchor_offset)
-    
+        xy = _topleft_from_aligned_xy(xy, align, size, self.size)
+
         self.surface.fill(_color(color), xy+size)
 
-    def image(self, image, xy, scale=1, align='topleft'):
+    def image(self, image, xy=None, scale=1, align='center'):
         scale = _scale(scale)
-        image_dimensions = image.size
+        image_size = image.size
 
         if scale != (1, 1):
-            image_dimensions = _xy_multiply(image_dimensions, scale)
-            image = pygame.transform.smoothscale(image, image_dimensions)
+            image_size = _xy_multiply(image_size, scale)
+            image = pygame.transform.smoothscale(image, image_size)
 
-        anchor_offset = _xy_multiply(_anchor(align), image_dimensions)
-        xy = _xy_subtract(xy, anchor_offset)
+        xy = _topleft_from_aligned_xy(xy, align, image_size, self.size)
 
         self.surface.blit(image.surface, xy)
 
 
 class Screen(Surface):
-    def __init__(self):
-        pygame.init()
-        pygame.font.init()
-
+    def _create_surface(self):
         surface = pygame.display.set_mode((320, 240))
-
         platform_specific.fixup_window()
-
-        super(Screen, self).__init__(surface)
+        return surface
 
     def update(self):
         pygame.display.update()
-
         self.needs_update = False
 
-    def before_loop(self):
+    def fill(self, *args, **kwargs):
+        super(Screen, self).fill(*args, **kwargs)
+        self.needs_update = True
+
+    def text(self, *args, **kwargs):
+        super(Screen, self).text(*args, **kwargs)
+        self.needs_update = True
+
+    def rectangle(self, *args, **kwargs):
+        super(Screen, self).rectangle(*args, **kwargs)
+        self.needs_update = True
+
+    def image(self, *args, **kwargs):
+        super(Screen, self).image(*args, **kwargs)
         self.needs_update = True
 
     def after_loop(self):
@@ -136,13 +171,18 @@ class Screen(Surface):
             self.update()
 
 
+screen = Screen()
+
+
 class Image(Surface):
     @classmethod
     def load(cls, filename):
+        pygame.init()
         surface = pygame.image.load(filename)
         surface = surface.convert_alpha()
         return cls(surface)
-    
+
     def __init__(self, surface=None, size=None):
+        pygame.init()
         surface = surface or pygame.Surface(size)
         super(Image, self).__init__(surface)

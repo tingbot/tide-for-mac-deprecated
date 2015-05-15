@@ -33,6 +33,7 @@ sad_tingbot_string = '''
 #########################
 '''.replace('\n', '')
 
+
 def sad_tingbot_image():
     result = pygame.image.fromstring(sad_tingbot_string, (25, 26), 'P')
     result.set_palette_at(ord('#'), [0,0,0])
@@ -42,8 +43,14 @@ def sad_tingbot_image():
 
     return result
 
-def error_screen(screen, exc_info):
-    print pygame.display.get_wm_info()
+
+def error_screen(exc_info):
+    surface = pygame.display.get_surface()
+    if not surface:
+        return
+
+    screen = graphics.Surface(surface)
+
     screen.fill(color='black')
 
     image = graphics.Image(surface=sad_tingbot_image())
@@ -58,7 +65,8 @@ def error_screen(screen, exc_info):
     screen.text(line1, xy=(320/2, 135), color='white', align='center', font_size=16)
     screen.text(line2, xy=(320/2, 155), color='white', align='center', font_size=16)
 
-    screen.update()
+    pygame.display.update()
+
 
 def get_app_frame(traceback):
     stack = []
