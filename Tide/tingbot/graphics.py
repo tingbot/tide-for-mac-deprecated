@@ -142,6 +142,7 @@ class Surface(object):
 
 class Screen(Surface):
     def _create_surface(self):
+        pygame.init()
         surface = pygame.display.set_mode((320, 240))
         platform_specific.fixup_window()
         return surface
