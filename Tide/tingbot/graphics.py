@@ -6,10 +6,25 @@ import os
 from . import platform_specific
 from .utils import cached_property
 
+# colors from http://clrs.cc/
 color_map = {
+    'aqua': (127, 219, 255),
+    'blue': (0, 116, 217),
+    'navy': (0, 31, 63),
+    'teal': (57, 204, 204),
+    'green': (46, 204, 64),
+    'olive': (61, 153, 112),
+    'lime': (1, 255, 112),
+    'yellow': (255, 220, 0),
+    'orange': (255, 133, 27),
+    'red': (255, 65, 54),
+    'fuchsia': (240, 18, 190),
+    'purple': (177, 13, 201),
+    'maroon': (133, 20, 75),
     'white': (255, 255, 255),
-    'grey': (128, 128, 128),
-    'gray': (128, 128, 128),
+    'silver': (221, 221, 221),
+    'gray': (170, 170, 170),
+    'grey': (170, 170, 170),
     'black': (0, 0, 0),
 }
 
@@ -54,11 +69,17 @@ def _scale(scale):
     else:
         raise TypeError('argument should be a number or a tuple')
 
-def _font(font, font_size):
+def _font(font, font_size, antialias):
     pygame.font.init()
     if font is None:
-        font = os.path.join(os.path.dirname(__file__), '04B_03__.TTF')
-    return pygame.font.Font(font, font_size)
+        font = os.path.join(os.path.dirname(__file__), 'Geneva.ttf')
+        if antialias is None:
+            antialias = (font_size < 9 or 17 < font_size)
+
+    if antialias is None:
+        antialias = True
+
+    return pygame.font.Font(font, font_size), antialias
 
 def _anchor(align):
     mapping = {
@@ -111,11 +132,14 @@ class Surface(object):
     def fill(self, color):
         self.surface.fill(_color(color))
 
-    def text(self, string, xy=None, color='grey', align='center', font=None, font_size=32):
-        font = _font(font, font_size)
+    def text(self, string, xy=None, color='grey', align='center', font=None, font_size=32, antialias=None):
+        font, antialias = _font(font, font_size, antialias)
         string = str(string)
 
-        text_image = Image(surface=font.render(string, 1, _color(color)))
+        if antialias is None:
+            antialias
+
+        text_image = Image(surface=font.render(string, antialias, _color(color)))
 
         self.image(text_image, xy, align=align)
 
