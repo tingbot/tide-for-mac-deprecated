@@ -9,5 +9,4 @@ def loop():
     pass
 
 # run the app
-import sys
-tingbot.run(sys.modules[__name__])
+tingbot.run(loop)
