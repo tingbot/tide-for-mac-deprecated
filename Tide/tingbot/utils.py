@@ -3,6 +3,19 @@ class Struct(object):
     def __init__(self, **kwds):
         self.__dict__.update(kwds)
 
+
+class CallbackList(object):
+    def __init__(self):
+        self._list = []
+
+    def __call__(self):
+        for callback in self._list:
+            callback()
+
+    def add(self, callback):
+        self._list.append(callback)
+
+
 # cached_property from werkzeug
 _missing = object()
 

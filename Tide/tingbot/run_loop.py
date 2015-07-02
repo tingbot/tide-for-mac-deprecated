@@ -1,6 +1,6 @@
 import sys, functools, operator, time, traceback
 from collections import namedtuple
-from .utils import Struct
+from .utils import Struct, CallbackList
 from . import error
 
 class Timer(Struct):
@@ -17,18 +17,6 @@ class every(object):
         main_run_loop.schedule(timer)
 
         return f
-
-
-class CallbackList(object):
-    def __init__(self):
-        self._list = []
-
-    def __call__(self):
-        for callback in self._list:
-            callback()
-
-    def add(self, callback):
-        self._list.append(callback)
 
 
 class RunLoop(object):
