@@ -10,6 +10,7 @@
 
 #import <ACEView.h>
 #import <FBKVOController.h>
+#import <Masonry.h>
 
 #import "FileSystemOutlineViewDataSource.h"
 #import "NSViewDocument.h"
@@ -24,18 +25,19 @@
 @import Quartz;
 
 @interface Document () <NSOutlineViewDelegate, NSSplitViewDelegate>
-
-@property (weak) IBOutlet NSOutlineView *outlineView;
-@property (weak) IBOutlet NSPopUpButton *runDestinationDropdown;
-@property (weak) IBOutlet NSSplitView *verticalSplitView;
-@property (weak) IBOutlet NSSplitView *horizontalSplitView;
+{
+    NSOutlineView *_outlineView;
+    NSPopUpButton *_runDestinationDropdown;
+    NSSplitView *_verticalSplitView;
+    NSSplitView *_horizontalSplitView;
+    ConsoleView *_consoleView;
+}
 
 @property (strong) NSString *code;
 @property (strong) NSFileWrapper *fileWrapper;
 @property (strong) FileSystemOutlineViewDataSource *outlineDataSource;
 @property (strong) NSViewDocument *editingDocument;
 @property (strong) NSFileWrapper *editingFileWrapper;
-@property (weak) IBOutlet ConsoleView *consoleView;
 
 @end
 
@@ -65,26 +67,6 @@
     return self;
 }
 
-- (void)windowControllerDidLoadNib:(NSWindowController *)aController {
-    [super windowControllerDidLoadNib:aController];
-    // Add any code here that needs to be executed once the windowController has loaded the document's window.
-    self.outlineView.dataSource = self.outlineDataSource;
-    self.outlineView.delegate = self;
-    [self.verticalSplitView setPosition:self.verticalSplitView.bounds.size.height ofDividerAtIndex:0];
-    
-    [self.outlineView registerForDraggedTypes:@[@"public.data"]];
-    [self.outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
-    
-    [self.runDestinationDropdown removeAllItems];
-    
-    [self.KVOController observe:[NetworkDeviceDiscoverer sharedInstance]
-                        keyPath:@"devices"
-                        options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial
-                          block:^(id observer, id object, NSDictionary *change) {
-                              [self setNetworkDevices:change[NSKeyValueChangeNewKey]];
-                          }];
-}
-
 + (BOOL)autosavesInPlace {
     return YES;
 }
@@ -104,12 +86,140 @@
 
 - (BOOL)readFromFileWrapper:(NSFileWrapper *)fileWrapper ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
-    self.outlineDataSource = [[FileSystemOutlineViewDataSource alloc] initWithFileWrapper:fileWrapper];
+    _outlineDataSource = [[FileSystemOutlineViewDataSource alloc] initWithFileWrapper:fileWrapper];
     self.fileWrapper = fileWrapper;
-    self.outlineView.dataSource = self.outlineDataSource;
+    _outlineView.dataSource = _outlineDataSource;
     self.fileWrapper.quicklookURL = self.fileURL;
     
     return YES;
+}
+
+- (void)makeWindowControllers
+{
+    NSWindow *window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 632, 533)
+                                                   styleMask:NSClosableWindowMask | NSTitledWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask
+                                                     backing:NSBackingStoreBuffered
+                                                       defer:YES];
+    
+    NSView *view = [NSView new];
+    [window setContentView:view];
+    
+    NSBox *topBar = [NSBox new];
+    topBar.boxType = NSBoxCustom;
+    topBar.fillColor = [NSColor colorWithSRGBRed:0.145 green:0.145 blue:0.145 alpha:1];
+    [view addSubview:topBar];
+    [topBar mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.top.right.equalTo(view);
+        make.height.equalTo(@41);
+    }];
+    
+    NSButton *runButton = [[NSButton alloc] init];
+    runButton.bordered = NO;
+    runButton.image = [NSImage imageNamed:@"play-pink"];
+    [topBar addSubview:runButton];
+    [runButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.size.equalTo(@28);
+        make.centerY.equalTo(topBar);
+        make.left.equalTo(topBar).offset(21);
+    }];
+    runButton.target = self;
+    runButton.action = @selector(runButtonPressed:);
+    
+    NSButton *uploadButton = [[NSButton alloc] init];
+    uploadButton.bordered = NO;
+    uploadButton.image = [NSImage imageNamed:@"upload-dark"];
+    uploadButton.enabled = NO;
+    [topBar addSubview:uploadButton];
+    [uploadButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(runButton);
+        make.left.equalTo(runButton.mas_right).offset(10);
+    }];
+    
+    _runDestinationDropdown = [[NSPopUpButton alloc] init];
+    [topBar addSubview:_runDestinationDropdown];
+    [_runDestinationDropdown mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(topBar).offset(-10);
+        make.centerY.equalTo(topBar);
+        make.width.greaterThanOrEqualTo(@195);
+    }];
+    
+    _verticalSplitView = [NSSplitView new];
+    _verticalSplitView.dividerStyle = NSSplitViewDividerStyleThin;
+    _verticalSplitView.vertical = YES;
+    _verticalSplitView.delegate = self;
+    [view addSubview:_verticalSplitView];
+    [_verticalSplitView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.equalTo(view);
+        make.top.equalTo(topBar.mas_bottom);
+        make.bottom.equalTo(view).offset(-20);
+    }];
+    
+    _outlineView = [NSOutlineView new];
+    [_verticalSplitView addSubview:_outlineView];
+    _outlineView.dataSource = self.outlineDataSource;
+    _outlineView.delegate = self;
+    _outlineView.backgroundColor = [NSColor colorWithSRGBRed:0.200 green:0.204 blue:0.204 alpha:1];
+    
+    NSTableColumn *iconColumn = [[NSTableColumn alloc] initWithIdentifier:@"icon"];
+    iconColumn.title = @"Icon";
+    iconColumn.dataCell = [NSImageCell new];
+    iconColumn.width = 31;
+    iconColumn.minWidth = 30;
+    [_outlineView addTableColumn:iconColumn];
+    _outlineView.outlineTableColumn = iconColumn;
+    
+    NSTableColumn *filenameColumn = [[NSTableColumn alloc] initWithIdentifier:@"filename"];
+    filenameColumn.title = @"Filename";
+    filenameColumn.dataCell = ({
+        NSTextFieldCell *c = [NSTextFieldCell new];
+        c.textColor = [NSColor whiteColor];
+        c;
+    });
+    filenameColumn.resizingMask = NSTableColumnAutoresizingMask;
+    [_outlineView addTableColumn:filenameColumn];
+
+    _horizontalSplitView = [NSSplitView new];
+    _horizontalSplitView.dividerStyle = NSSplitViewDividerStyleThin;
+    _horizontalSplitView.vertical = NO;
+    _horizontalSplitView.delegate = self;
+    [_verticalSplitView addSubview:_horizontalSplitView];
+    
+    [_horizontalSplitView addSubview:[NSView new]];
+    
+    _consoleView = [ConsoleView new];
+    [_horizontalSplitView addSubview:_consoleView];
+    
+    NSBox *pinkBox = [NSBox new];
+    pinkBox.fillColor = [NSColor colorWithSRGBRed:0.890 green:0.129 blue:0.298 alpha:1];
+    pinkBox.boxType = NSBoxCustom;
+    [view addSubview:pinkBox];
+    [pinkBox mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.bottom.right.equalTo(view);
+        make.top.equalTo(_verticalSplitView.mas_bottom);
+    }];
+    
+    [window setInitialFirstResponder:view];
+    
+    NSWindowController *controller = [[NSWindowController alloc] initWithWindow:window];
+    [self addWindowController:controller];
+    
+    [window layoutIfNeeded];
+    
+    [_horizontalSplitView setPosition:_horizontalSplitView.bounds.size.height ofDividerAtIndex:0];
+    [_verticalSplitView setPosition:100 ofDividerAtIndex:0];
+    
+    [_outlineView registerForDraggedTypes:@[@"public.data"]];
+    [_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
+    
+    [_runDestinationDropdown removeAllItems];
+    
+    [self.KVOController observe:[NetworkDeviceDiscoverer sharedInstance]
+                        keyPath:@"devices"
+                        options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial
+                          block:^(id observer, id object, NSDictionary *change) {
+                              [self setNetworkDevices:change[NSKeyValueChangeNewKey]];
+                          }];
+
 }
 
 #pragma mark UI Callbacks
@@ -124,15 +234,15 @@
     
     [self.fileWrapper writeToURL:runDirectoryURL options:0 originalContentsURL:nil error:&error];
     
-    Device *device = self.runDestinationDropdown.selectedItem.representedObject;
+    Device *device = _runDestinationDropdown.selectedItem.representedObject;
     
     NSFileHandle *consoleFD = [device run:runDirectory error:&error];
-    [self.consoleView clear];
-    self.consoleView.fileHandleToRead = consoleFD;
+    [_consoleView clear];
+    _consoleView.fileHandleToRead = consoleFD;
     
-    if ([self.verticalSplitView isSubviewCollapsed:self.consoleView]) {
-        [self.verticalSplitView setPosition:self.verticalSplitView.bounds.size.height * 4.0/5.0
-                           ofDividerAtIndex:0];
+    if ([_horizontalSplitView isSubviewCollapsed:_consoleView]) {
+        [_horizontalSplitView setPosition:_horizontalSplitView.bounds.size.height * 4.0/5.0
+                         ofDividerAtIndex:0];
     }
 }
 
@@ -140,7 +250,7 @@
 
 - (BOOL)splitView:(NSSplitView *)splitView canCollapseSubview:(NSView *)subview
 {
-    if (subview == self.consoleView) {
+    if (subview == _consoleView) {
         return YES;
     } else {
         return NO;
@@ -149,7 +259,7 @@
 
 - (BOOL)splitView:(NSSplitView *)splitView shouldCollapseSubview:(NSView *)subview forDoubleClickOnDividerAtIndex:(NSInteger)dividerIndex
 {
-    if (subview == self.consoleView) {
+    if (subview == _consoleView) {
         return YES;
     } else {
         return NO;
@@ -163,7 +273,7 @@
 
 - (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMaximumPosition ofSubviewAt:(NSInteger)dividerIndex
 {
-    if (splitView == self.verticalSplitView) {
+    if (splitView == _verticalSplitView) {
         // the console should not be smaller than 100px high
         return splitView.bounds.size.height - 100;
     }
@@ -175,7 +285,7 @@
 
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification
 {
-    NSFileWrapper *fileWrapper = [self.outlineView itemAtRow:self.outlineView.selectedRow];
+    NSFileWrapper *fileWrapper = [_outlineView itemAtRow:_outlineView.selectedRow];
     
     if (fileWrapper.isRegularFile) {
         [self saveEditingDocumentChanges];
@@ -202,42 +312,42 @@
 - (void)setDropdownDevices:(NSArray *)dropdownDevices
 {
     // remove items no longer in the array
-    for (NSMenuItem *item in self.runDestinationDropdown.itemArray) {
+    for (NSMenuItem *item in _runDestinationDropdown.itemArray) {
         if (![dropdownDevices containsObject:item.representedObject]) {
-            if ([self.runDestinationDropdown selectedItem] == item) {
+            if ([_runDestinationDropdown selectedItem] == item) {
                 item.enabled = NO;
             } else {
-                [self.runDestinationDropdown removeItemWithTitle:item.title];
+                [_runDestinationDropdown removeItemWithTitle:item.title];
             }
         }
     }
     
-    NSArray *existingDevices = [self.runDestinationDropdown.itemArray valueForKey:@"representedObject"];
+    NSArray *existingDevices = [_runDestinationDropdown.itemArray valueForKey:@"representedObject"];
     
     // add items that are new
     for (Device *device in dropdownDevices) {
         if (![existingDevices containsObject:device]) {
-            [self.runDestinationDropdown addItemWithTitle:device.name];
-            self.runDestinationDropdown.lastItem.representedObject = device;
+            [_runDestinationDropdown addItemWithTitle:device.name];
+            _runDestinationDropdown.lastItem.representedObject = device;
             
             NSImage *image = device.image;
             
             image.size = CGSizeMake(16, 16);
-            self.runDestinationDropdown.lastItem.image = image;
+            _runDestinationDropdown.lastItem.image = image;
         }
     }
     
-    [self.runDestinationDropdown invalidateIntrinsicContentSize];
+    [_runDestinationDropdown invalidateIntrinsicContentSize];
 }
 
 - (void)setEditorView:(NSView *)view
 {
-    NSView *oldEditorView = self.horizontalSplitView.subviews[1];
+    NSView *oldEditorView = _horizontalSplitView.subviews[0];
     
     view.frame = oldEditorView.frame;
     
-    [self.horizontalSplitView replaceSubview:oldEditorView with:view];
-    [self.horizontalSplitView adjustSubviews];
+    [_horizontalSplitView replaceSubview:oldEditorView with:view];
+    [_horizontalSplitView adjustSubviews];
 }
 
 - (NSViewDocument *)editingDocumentForFileWrapper:(NSFileWrapper *)fileWrapper
@@ -294,7 +404,7 @@
         return;
     }
     
-    NSFileWrapper *parent = [self.outlineView parentForItem:self.editingFileWrapper];
+    NSFileWrapper *parent = [_outlineView parentForItem:self.editingFileWrapper];
     
     if (!parent) {
         parent = self.fileWrapper;
@@ -321,9 +431,9 @@
     [parent addFileWrapper:newFileWrapper];
     
     if (parent == self.fileWrapper) {
-        [self.outlineView reloadItem:nil reloadChildren:YES];
+        [_outlineView reloadItem:nil reloadChildren:YES];
     } else {
-        [self.outlineView reloadItem:parent reloadChildren:YES];
+        [_outlineView reloadItem:parent reloadChildren:YES];
     }
 }
 

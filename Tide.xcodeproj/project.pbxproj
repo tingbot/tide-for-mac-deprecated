@@ -15,7 +15,6 @@
 		5629F0161ABF629B00DEBC4F /* docopt.py in Resources */ = {isa = PBXBuildFile; fileRef = 5629F0151ABF629B00DEBC4F /* docopt.py */; };
 		5632708919DC170F0035768D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5632708819DC170F0035768D /* main.m */; };
 		5632708C19DC170F0035768D /* Document.m in Sources */ = {isa = PBXBuildFile; fileRef = 5632708B19DC170F0035768D /* Document.m */; };
-		5632708F19DC170F0035768D /* Document.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5632708D19DC170F0035768D /* Document.xib */; };
 		5632709119DC170F0035768D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5632709019DC170F0035768D /* Images.xcassets */; };
 		5632709419DC17100035768D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5632709219DC17100035768D /* MainMenu.xib */; };
 		563270A019DC17100035768D /* TideTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5632709F19DC17100035768D /* TideTests.m */; };
@@ -75,7 +74,6 @@
 		5632708819DC170F0035768D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5632708A19DC170F0035768D /* Document.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Document.h; sourceTree = "<group>"; };
 		5632708B19DC170F0035768D /* Document.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Document.m; sourceTree = "<group>"; };
-		5632708E19DC170F0035768D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Document.xib; sourceTree = "<group>"; };
 		5632709019DC170F0035768D /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		5632709319DC17100035768D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		5632709919DC17100035768D /* TideTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TideTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -156,7 +154,6 @@
 				5632708B19DC170F0035768D /* Document.m */,
 				5629F00D1AB9CB2900DEBC4F /* File.h */,
 				5629F00E1AB9CB2900DEBC4F /* File.m */,
-				5632708D19DC170F0035768D /* Document.xib */,
 				5682BD0C1A2E2AEB00CF08DB /* CodeDocument.h */,
 				5682BD0D1A2E2AEB00CF08DB /* CodeDocument.m */,
 				5682BD121A30682400CF08DB /* QuickLookDocument.h */,
@@ -334,7 +331,6 @@
 				5629F0141ABF616B00DEBC4F /* tbtool in Resources */,
 				5629F0161ABF629B00DEBC4F /* docopt.py in Resources */,
 				56C82BC41AEA5A3300D181E4 /* TingappIcon.icns in Resources */,
-				5632708F19DC170F0035768D /* Document.xib in Resources */,
 				56E5B82B1B4C4A0D00048E18 /* pygame in Resources */,
 				56E5B8251B4C49F400048E18 /* SDL_image.framework in Resources */,
 				56E5B8271B4C49F400048E18 /* SDL_ttf.framework in Resources */,
@@ -429,14 +425,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		5632708D19DC170F0035768D /* Document.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5632708E19DC170F0035768D /* Base */,
-			);
-			name = Document.xib;
-			sourceTree = "<group>";
-		};
 		5632709219DC17100035768D /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
