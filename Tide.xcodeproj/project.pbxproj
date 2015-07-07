@@ -28,6 +28,11 @@
 		56C82BC41AEA5A3300D181E4 /* TingappIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 56C82BC31AEA5A3300D181E4 /* TingappIcon.icns */; };
 		56D111241AD9675700C99ACF /* NetworkDeviceDiscoverer.m in Sources */ = {isa = PBXBuildFile; fileRef = 56D111231AD9675700C99ACF /* NetworkDeviceDiscoverer.m */; };
 		56D1D2801A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 56D1D27F1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m */; };
+		56E5B8251B4C49F400048E18 /* SDL_image.framework in Resources */ = {isa = PBXBuildFile; fileRef = 56E5B8201B4C49F400048E18 /* SDL_image.framework */; };
+		56E5B8261B4C49F400048E18 /* SDL_mixer.framework in Resources */ = {isa = PBXBuildFile; fileRef = 56E5B8211B4C49F400048E18 /* SDL_mixer.framework */; };
+		56E5B8271B4C49F400048E18 /* SDL_ttf.framework in Resources */ = {isa = PBXBuildFile; fileRef = 56E5B8221B4C49F400048E18 /* SDL_ttf.framework */; };
+		56E5B8281B4C49F400048E18 /* SDL.framework in Resources */ = {isa = PBXBuildFile; fileRef = 56E5B8231B4C49F400048E18 /* SDL.framework */; };
+		56E5B82B1B4C4A0D00048E18 /* pygame in Resources */ = {isa = PBXBuildFile; fileRef = 56E5B82A1B4C4A0D00048E18 /* pygame */; };
 		56F84F2A1A82D2580011BDFF /* SimulatorDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 56F84F291A82D2580011BDFF /* SimulatorDevice.m */; };
 		56F84F2D1A82D28F0011BDFF /* Device.m in Sources */ = {isa = PBXBuildFile; fileRef = 56F84F2C1A82D28F0011BDFF /* Device.m */; };
 		56F84F2F1A82D4B20011BDFF /* tingbot in Resources */ = {isa = PBXBuildFile; fileRef = 56F84F2E1A82D4B20011BDFF /* tingbot */; };
@@ -42,6 +47,18 @@
 			remoteInfo = Tide;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		56E5B82C1B4C4E1200048E18 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0AF9D5F7D4DA252DFD633DF2 /* Pods-Tide.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tide.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Tide/Pods-Tide.debug.xcconfig"; sourceTree = "<group>"; };
@@ -79,6 +96,11 @@
 		56D111231AD9675700C99ACF /* NetworkDeviceDiscoverer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkDeviceDiscoverer.m; sourceTree = "<group>"; };
 		56D1D27E1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemOutlineViewDataSource.h; sourceTree = "<group>"; };
 		56D1D27F1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemOutlineViewDataSource.m; sourceTree = "<group>"; };
+		56E5B8201B4C49F400048E18 /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_image.framework; sourceTree = "<group>"; };
+		56E5B8211B4C49F400048E18 /* SDL_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_mixer.framework; sourceTree = "<group>"; };
+		56E5B8221B4C49F400048E18 /* SDL_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_ttf.framework; sourceTree = "<group>"; };
+		56E5B8231B4C49F400048E18 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = "<group>"; };
+		56E5B82A1B4C4A0D00048E18 /* pygame */ = {isa = PBXFileReference; lastKnownFileType = folder; path = pygame; sourceTree = "<group>"; };
 		56F84F281A82D2580011BDFF /* SimulatorDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimulatorDevice.h; sourceTree = "<group>"; };
 		56F84F291A82D2580011BDFF /* SimulatorDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimulatorDevice.m; sourceTree = "<group>"; };
 		56F84F2B1A82D28F0011BDFF /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
@@ -163,6 +185,7 @@
 				5690AC951AE819F8008CB34B /* Icon.icns */,
 				56C82BC31AEA5A3300D181E4 /* TingappIcon.icns */,
 				56F84F2E1A82D4B20011BDFF /* tingbot */,
+				56E5B82D1B4C4E9D00048E18 /* Pygame Dependencies */,
 				5632708619DC170F0035768D /* Supporting Files */,
 			);
 			path = Tide;
@@ -194,6 +217,18 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		56E5B82D1B4C4E9D00048E18 /* Pygame Dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				56E5B82A1B4C4A0D00048E18 /* pygame */,
+				56E5B8201B4C49F400048E18 /* SDL_image.framework */,
+				56E5B8211B4C49F400048E18 /* SDL_mixer.framework */,
+				56E5B8221B4C49F400048E18 /* SDL_ttf.framework */,
+				56E5B8231B4C49F400048E18 /* SDL.framework */,
+			);
+			name = "Pygame Dependencies";
+			sourceTree = "<group>";
+		};
 		E0C16C9BEAD92A94A29983CE /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -223,6 +258,7 @@
 				5632708019DC170F0035768D /* Frameworks */,
 				5632708119DC170F0035768D /* Resources */,
 				7BAB7418D23844D1B8EB4BA7 /* Copy Pods Resources */,
+				56E5B82C1B4C4E1200048E18 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -276,6 +312,7 @@
 			knownRegions = (
 				en,
 				Base,
+				English,
 			);
 			mainGroup = 5632707A19DC170F0035768D;
 			productRefGroup = 5632708419DC170F0035768D /* Products */;
@@ -298,6 +335,11 @@
 				5629F0161ABF629B00DEBC4F /* docopt.py in Resources */,
 				56C82BC41AEA5A3300D181E4 /* TingappIcon.icns in Resources */,
 				5632708F19DC170F0035768D /* Document.xib in Resources */,
+				56E5B82B1B4C4A0D00048E18 /* pygame in Resources */,
+				56E5B8251B4C49F400048E18 /* SDL_image.framework in Resources */,
+				56E5B8271B4C49F400048E18 /* SDL_ttf.framework in Resources */,
+				56E5B8281B4C49F400048E18 /* SDL.framework in Resources */,
+				56E5B8261B4C49F400048E18 /* SDL_mixer.framework in Resources */,
 				5690AC961AE819F8008CB34B /* Icon.icns in Resources */,
 				5632709119DC170F0035768D /* Images.xcassets in Resources */,
 				56F84F2F1A82D4B20011BDFF /* tingbot in Resources */,
@@ -489,6 +531,10 @@
 			baseConfigurationReference = 0AF9D5F7D4DA252DFD633DF2 /* Pods-Tide.debug.xcconfig */;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Tide",
+				);
 				INFOPLIST_FILE = Tide/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -500,6 +546,10 @@
 			baseConfigurationReference = C4DEF11D5E47AC6F783897D7 /* Pods-Tide.release.xcconfig */;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Tide",
+				);
 				INFOPLIST_FILE = Tide/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
