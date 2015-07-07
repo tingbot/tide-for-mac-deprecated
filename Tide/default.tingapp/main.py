@@ -6,7 +6,7 @@ screen.fill(color='black')
 
 def loop():
     # drawing code here
-    pass
+    screen.text('Hello world!')
 
 # run the app
 tingbot.run(loop)
