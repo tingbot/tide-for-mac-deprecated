@@ -2,7 +2,7 @@
 platform :osx, "10.9"
 
 target "Tide" do
-pod 'ACEView', '~> 0.0.4'
+pod 'ACEView', :git => 'https://github.com/tingbot/ACEView.git'
 pod 'Masonry'
 pod 'ANSIEscapeHelper', :git => 'https://github.com/griffin-stewie/ANSIEscapeHelper.git'
 pod 'KVOController'

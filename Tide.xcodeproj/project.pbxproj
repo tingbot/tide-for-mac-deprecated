@@ -25,6 +25,7 @@
 		5690AC881AE3F526008CB34B /* default.tingapp in Resources */ = {isa = PBXBuildFile; fileRef = 5690AC871AE3F526008CB34B /* default.tingapp */; };
 		5690AC961AE819F8008CB34B /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5690AC951AE819F8008CB34B /* Icon.icns */; };
 		56C82BC41AEA5A3300D181E4 /* TingappIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 56C82BC31AEA5A3300D181E4 /* TingappIcon.icns */; };
+		56CF16CD1B507ED100E59D5E /* CustomSplitView.m in Sources */ = {isa = PBXBuildFile; fileRef = 56CF16CC1B507ED100E59D5E /* CustomSplitView.m */; };
 		56D111241AD9675700C99ACF /* NetworkDeviceDiscoverer.m in Sources */ = {isa = PBXBuildFile; fileRef = 56D111231AD9675700C99ACF /* NetworkDeviceDiscoverer.m */; };
 		56D1D2801A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 56D1D27F1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m */; };
 		56E5B8251B4C49F400048E18 /* SDL_image.framework in Resources */ = {isa = PBXBuildFile; fileRef = 56E5B8201B4C49F400048E18 /* SDL_image.framework */; };
@@ -90,6 +91,8 @@
 		5690AC871AE3F526008CB34B /* default.tingapp */ = {isa = PBXFileReference; lastKnownFileType = folder; path = default.tingapp; sourceTree = "<group>"; };
 		5690AC951AE819F8008CB34B /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Icon.icns; sourceTree = "<group>"; };
 		56C82BC31AEA5A3300D181E4 /* TingappIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = TingappIcon.icns; sourceTree = "<group>"; };
+		56CF16CB1B507ED100E59D5E /* CustomSplitView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomSplitView.h; sourceTree = "<group>"; };
+		56CF16CC1B507ED100E59D5E /* CustomSplitView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomSplitView.m; sourceTree = "<group>"; };
 		56D111221AD9675700C99ACF /* NetworkDeviceDiscoverer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkDeviceDiscoverer.h; sourceTree = "<group>"; };
 		56D111231AD9675700C99ACF /* NetworkDeviceDiscoverer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkDeviceDiscoverer.m; sourceTree = "<group>"; };
 		56D1D27E1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemOutlineViewDataSource.h; sourceTree = "<group>"; };
@@ -175,6 +178,8 @@
 				564772131A63D9F500498A35 /* NSFileWrapper+QuicklookURL.h */,
 				564772141A63D9F500498A35 /* NSFileWrapper+QuicklookURL.m */,
 				5629F0131ABF616B00DEBC4F /* tbtool */,
+				56CF16CB1B507ED100E59D5E /* CustomSplitView.h */,
+				56CF16CC1B507ED100E59D5E /* CustomSplitView.m */,
 				5629F0151ABF629B00DEBC4F /* docopt.py */,
 				5690AC871AE3F526008CB34B /* default.tingapp */,
 				5632709019DC170F0035768D /* Images.xcassets */,
@@ -392,6 +397,7 @@
 			files = (
 				5682BD111A2E2B0400CF08DB /* NSViewDocument.m in Sources */,
 				56D1D2801A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m in Sources */,
+				56CF16CD1B507ED100E59D5E /* CustomSplitView.m in Sources */,
 				564772151A63D9F500498A35 /* NSFileWrapper+QuicklookURL.m in Sources */,
 				56F84F2D1A82D28F0011BDFF /* Device.m in Sources */,
 				5632708C19DC170F0035768D /* Document.m in Sources */,

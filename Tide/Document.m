@@ -21,6 +21,7 @@
 #import "NetworkDevice.h"
 #import "NetworkDeviceDiscoverer.h"
 #import "ConsoleView.h"
+#import "CustomSplitView.h"
 
 @import Quartz;
 
@@ -106,6 +107,7 @@
     
     NSBox *topBar = [NSBox new];
     topBar.boxType = NSBoxCustom;
+    topBar.borderWidth = 0;
     topBar.fillColor = [NSColor colorWithSRGBRed:0.145 green:0.145 blue:0.145 alpha:1];
     [view addSubview:topBar];
     [topBar mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -116,6 +118,7 @@
     NSButton *runButton = [[NSButton alloc] init];
     runButton.bordered = NO;
     runButton.image = [NSImage imageNamed:@"play-pink"];
+    runButton.toolTip = @"Run";
     [topBar addSubview:runButton];
     [runButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.size.equalTo(@28);
@@ -129,6 +132,7 @@
     uploadButton.bordered = NO;
     uploadButton.image = [NSImage imageNamed:@"upload-dark"];
     uploadButton.enabled = NO;
+    uploadButton.toolTip = @"Upload";
     [topBar addSubview:uploadButton];
     [uploadButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(runButton);
@@ -143,7 +147,8 @@
         make.width.greaterThanOrEqualTo(@195);
     }];
     
-    _verticalSplitView = [NSSplitView new];
+    _verticalSplitView = [[CustomSplitView alloc] initWithDividerColor:[NSColor colorWithSRGBRed:0.118 green:0.122 blue:0.118 alpha:1]
+                                                      dividerThickness:1.0];
     _verticalSplitView.dividerStyle = NSSplitViewDividerStyleThin;
     _verticalSplitView.vertical = YES;
     _verticalSplitView.delegate = self;
@@ -206,7 +211,7 @@
     [window layoutIfNeeded];
     
     [_horizontalSplitView setPosition:_horizontalSplitView.bounds.size.height ofDividerAtIndex:0];
-    [_verticalSplitView setPosition:100 ofDividerAtIndex:0];
+    [_verticalSplitView setPosition:150 ofDividerAtIndex:0];
     
     [_outlineView registerForDraggedTypes:@[@"public.data"]];
     [_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
@@ -273,9 +278,9 @@
 
 - (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMaximumPosition ofSubviewAt:(NSInteger)dividerIndex
 {
-    if (splitView == _verticalSplitView) {
-        // the console should not be smaller than 100px high
-        return splitView.bounds.size.height - 100;
+    if (splitView == _horizontalSplitView) {
+        // the console should not be smaller than 60px high
+        return splitView.bounds.size.height - 60;
     }
     
     return proposedMaximumPosition;
