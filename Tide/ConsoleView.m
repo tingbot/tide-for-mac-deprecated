@@ -57,7 +57,9 @@
     
     _textView = [[NSTextView alloc] initWithFrame:self.bounds];
     _textView.editable = NO;
+    _textView.selectable = YES;
     _textView.backgroundColor = [NSColor colorWithWhite:0.13 alpha:1.0];
+    _textView.autoresizingMask = NSViewWidthSizable;
     
     _scrollView.documentView = _textView;
     
