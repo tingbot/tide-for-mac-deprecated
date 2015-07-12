@@ -11,6 +11,7 @@
 #import <ACEView.h>
 #import <FBKVOController.h>
 #import <Masonry.h>
+#import <ReactiveCocoa.h>
 
 #import "FileSystemOutlineViewDataSource.h"
 #import "NSViewDocument.h"
@@ -32,7 +33,10 @@
     NSSplitView *_verticalSplitView;
     NSSplitView *_horizontalSplitView;
     ConsoleView *_consoleView;
+    NSTask *_runningTask;
 }
+
+@property (strong) NSTask *runningTask;
 
 @property (strong) NSString *code;
 @property (strong) NSFileWrapper *fileWrapper;
@@ -127,6 +131,24 @@
     }];
     runButton.target = self;
     runButton.action = @selector(runButtonPressed:);
+    
+    NSButton *stopButton = [[NSButton alloc] init];
+    stopButton.bordered = NO;
+    stopButton.image = [NSImage imageNamed:@"stop-pink"];
+    stopButton.toolTip = @"Stop";
+    [topBar addSubview:stopButton];
+    [stopButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(runButton);
+    }];
+    stopButton.target = self;
+    stopButton.action = @selector(stopButtonPressed:);
+    
+    RACSignal *runningTaskSignal = [RACObserve(self, runningTask) map:^id(id value) {
+        return @(value != nil);
+    }];
+    
+    RAC(runButton, hidden) = runningTaskSignal;
+    RAC(stopButton, hidden) = [runningTaskSignal not];
     
     NSButton *uploadButton = [[NSButton alloc] init];
     uploadButton.bordered = NO;
@@ -241,14 +263,16 @@
     
     Device *device = _runDestinationDropdown.selectedItem.representedObject;
     
-    NSFileHandle *consoleFD = [device run:runDirectory error:&error];
-    [_consoleView clear];
-    _consoleView.fileHandleToRead = consoleFD;
+    self.runningTask = [device run:runDirectory error:&error];
     
     if ([_horizontalSplitView isSubviewCollapsed:_consoleView]) {
         [_horizontalSplitView setPosition:_horizontalSplitView.bounds.size.height * 4.0/5.0
                          ofDividerAtIndex:0];
     }
+}
+
+- (void)stopButtonPressed:(id)sender {
+    [self.runningTask terminate];
 }
 
 #pragma mark NSSplitViewDelegate
@@ -353,6 +377,33 @@
     
     [_horizontalSplitView replaceSubview:oldEditorView with:view];
     [_horizontalSplitView adjustSubviews];
+}
+
+- (NSTask *)runningTask
+{
+    return _runningTask;
+}
+
+- (void)setRunningTask:(NSTask *)runningTask
+{
+    [_consoleView clear];
+    [_consoleView setFileHandleToRead:[runningTask.standardOutput fileHandleForReading]];
+    
+    __typeof__(self) __weak weakSelf = self;
+    
+    runningTask.terminationHandler = ^(NSTask *task){
+        __typeof__(self) strongSelf = weakSelf;
+        
+        if (strongSelf) {
+            strongSelf->_consoleView.fileHandleToRead = nil;
+            
+            [weakSelf willChangeValueForKey:@"runningTask"];
+            strongSelf->_runningTask = nil;
+            [weakSelf didChangeValueForKey:@"runningTask"];
+        }
+    };
+    
+    _runningTask = runningTask;
 }
 
 - (NSViewDocument *)editingDocumentForFileWrapper:(NSFileWrapper *)fileWrapper

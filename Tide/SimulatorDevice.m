@@ -17,7 +17,7 @@
     return NO;
 }
 
-- (NSFileHandle *)run:(NSString *)path error:(NSError *__autoreleasing *)error
+- (NSTask *)run:(NSString *)path error:(NSError *__autoreleasing *)error
 {
     NSTask *task = [NSTask new];
     
@@ -29,7 +29,7 @@
     
     [task launch];
     
-    return [taskOutput fileHandleForReading];
+    return task;
 }
 
 - (NSString *)name

@@ -82,12 +82,9 @@ def run(app_path, hostname):
             'ssh',
             '-o', 'ControlPath=%s' % control_path,
             'pi@%s' % hostname,
-            'tbopen "%s"' % app_install_location])
-    
-        print 'App started'
+            'tbopen --follow "%s"' % app_install_location])
     finally:
-        pass
-    #     close_ssh_session(control_path)
+        close_ssh_session(control_path)
 
 
 def install(app_path, hostname):

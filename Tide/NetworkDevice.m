@@ -28,7 +28,7 @@
     return YES;
 }
 
-- (NSFileHandle *)run:(NSString *)path error:(NSError **)error
+- (NSTask *)run:(NSString *)path error:(NSError **)error
 {
     NSTask *task = [NSTask new];
     
@@ -41,7 +41,7 @@
     
     [task launch];
     
-    return [taskOutput fileHandleForReading];
+    return task;
 }
 
 - (void)install:(NSString *)path

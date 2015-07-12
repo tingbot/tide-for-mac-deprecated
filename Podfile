@@ -6,6 +6,7 @@ pod 'ACEView', :git => 'https://github.com/tingbot/ACEView.git'
 pod 'Masonry'
 pod 'ANSIEscapeHelper', :git => 'https://github.com/griffin-stewie/ANSIEscapeHelper.git'
 pod 'KVOController'
+pod 'ReactiveCocoa'
 end
 
 target "TideTests" do

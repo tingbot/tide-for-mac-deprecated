@@ -16,7 +16,7 @@
     return NO;
 }
 
-- (NSFileHandle *)run:(NSString *)path error:(NSError **)error
+- (NSTask *)run:(NSString *)path error:(NSError **)error
 {
     NSAssert(false, @"subclasses must override");
     return nil;
