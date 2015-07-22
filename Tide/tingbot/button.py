@@ -9,6 +9,8 @@ class Button(object):
 buttons = {
     'left': Button(11),
     'right': Button(12),
+    'midleft': Button(16),
+    'midright': Button(18),
 }
 
 class press(object):
@@ -40,7 +42,7 @@ def setup():
 
     for button in buttons.values():
         GPIO.setup(button.pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        GPIO.add_event_detect(button.pin, GPIO.RISING, bouncetime=50)
+        GPIO.add_event_detect(button.pin, GPIO.RISING, bouncetime=200)
 
     from .run_loop import main_run_loop
     main_run_loop.add_wait_callback(wait)
