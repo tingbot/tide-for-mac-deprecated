@@ -316,7 +316,7 @@
 {
     NSFileWrapper *fileWrapper = [_outlineView itemAtRow:_outlineView.selectedRow];
     
-    if (fileWrapper.isRegularFile) {
+    if (fileWrapper.isRegularFile && fileWrapper != self.editingFileWrapper) {
         [self saveEditingDocumentChanges];
         
         self.editingDocument = [self editingDocumentForFileWrapper:fileWrapper];
