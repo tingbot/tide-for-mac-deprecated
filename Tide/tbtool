@@ -1,8 +1,22 @@
 #!/usr/bin/env python
 
 from docopt import docopt
-import sys, os, textwrap, uuid, datetime
+import sys, os, textwrap, uuid, datetime, getpass, shutil
 import subprocess
+
+
+def tingbot_key_path():
+    dir_path = '/tmp/tide-key-%s/' % getpass.getuser()
+    tmp_path = os.path.join(dir_path, 'tingbot.key')
+    
+    if not os.path.exists(tmp_path):
+        if not os.path.exists(dir_path):
+            os.mkdir(os.path.dirname(tmp_path), 0700)
+        src_path = os.path.join(os.path.dirname(__file__), 'tingbot.key')
+        shutil.copyfile(src_path, tmp_path)
+        os.chmod(tmp_path, 0600)
+    
+    return tmp_path
 
 
 def open_ssh_session(hostname):
@@ -13,6 +27,7 @@ def open_ssh_session(hostname):
     subprocess.check_call([
         'ssh',
         '-nNf4',
+        '-i', tingbot_key_path(),
         '-o', 'ControlMaster=yes',
         '-o', 'ControlPath=%s' % control_path,
         'pi@%s' % hostname])
