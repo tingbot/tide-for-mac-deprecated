@@ -38,7 +38,7 @@
     [self.view awakeFromNib];
     
     self.view.mode = ACEModePython;
-    self.view.theme = ACEThemePastelOnDark;
+    self.view.theme = ACEThemeMonokai;
     self.view.delegate = self;
     self.view.translatesAutoresizingMaskIntoConstraints = NO;
     self.view.borderType = NSNoBorder;
