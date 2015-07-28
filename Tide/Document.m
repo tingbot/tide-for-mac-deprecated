@@ -179,6 +179,8 @@
         make.left.right.equalTo(view);
         make.top.equalTo(topBar.mas_bottom);
         make.bottom.equalTo(view).offset(-20);
+        make.height.greaterThanOrEqualTo(@200);
+        make.width.greaterThanOrEqualTo(@400);
     }];
     
     _outlineView = [NSOutlineView new];
