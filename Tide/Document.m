@@ -46,6 +46,10 @@
 
 @end
 
+@interface FilesOutlineView : NSOutlineView
+
+@end
+
 @implementation Document
 
 - (instancetype)initWithType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
@@ -183,7 +187,7 @@
         make.width.greaterThanOrEqualTo(@400);
     }];
     
-    _outlineView = [NSOutlineView new];
+    _outlineView = [FilesOutlineView new];
     _outlineView.dataSource = self.outlineDataSource;
     _outlineView.delegate = self;
     _outlineView.headerView = nil;
@@ -332,6 +336,22 @@
     }
 }
 
+- (NSMenu *)outlineView:(NSOutlineView *)outlineView menuForRow:(long)row
+{
+    NSMenu *menu = [[NSMenu alloc] init];
+    NSFileWrapper *fileWrapper = [outlineView itemAtRow:row];
+    
+    NSMenuItem *item;
+    
+    item = [menu addItemWithTitle:[NSString stringWithFormat:@"Delete %@", fileWrapper.filename]
+                           action:@selector(removeFile:)
+                    keyEquivalent:@""];
+    item.target = self;
+    item.representedObject = fileWrapper;
+    
+    return menu;
+}
+
 #pragma mark Private
 
 - (void)setNetworkDevices:(NSSet *)networkDevices
@@ -445,15 +465,17 @@
 
 - (NSFileWrapper *)parentOfFileWrapper:(NSFileWrapper *)target usingRoot:(NSFileWrapper *)root
 {
-    for (NSFileWrapper *fileWrapper in root.fileWrappers) {
+    for (NSFileWrapper *fileWrapper in root.fileWrappers.allValues) {
         if (fileWrapper == target) {
             return root;
         }
         
-        NSFileWrapper *parent = [self parentOfFileWrapper:target usingRoot:fileWrapper];
-        
-        if (parent) {
-            return parent;
+        if (fileWrapper.isDirectory) {
+            NSFileWrapper *parent = [self parentOfFileWrapper:target usingRoot:fileWrapper];
+            
+            if (parent) {
+                return parent;
+            }
         }
     }
     
@@ -497,6 +519,39 @@
     } else {
         [_outlineView reloadItem:parent reloadChildren:YES];
     }
+}
+
+- (void)removeFile:(NSMenuItem *)menuItem
+{
+    NSFileWrapper *fileWrapper = menuItem.representedObject;
+    NSFileWrapper *parent = [self parentOfFileWrapper:fileWrapper usingRoot:self.fileWrapper];
+    [parent removeFileWrapper:fileWrapper];
+    [_outlineView reloadData];
+}
+
+@end
+
+@implementation FilesOutlineView
+
+- (NSMenu *)menuForEvent:(NSEvent*)evt
+{
+    NSPoint pt = [self convertPoint:[evt locationInWindow] fromView:nil];
+    long row = [self rowAtPoint:pt];
+
+    if (row == -1) {
+        return nil;
+    }
+    
+    return [self menuForRow:row];
+}
+
+- (NSMenu *)menuForRow:(long)row
+{
+    if ([self.delegate respondsToSelector:@selector(outlineView:menuForRow:)]) {
+        return [(id)self.delegate outlineView:self menuForRow:row];
+    }
+    
+    return nil;
 }
 
 @end
