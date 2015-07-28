@@ -529,6 +529,16 @@
     [_outlineView reloadData];
 }
 
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+{
+    if (self.fileWrapper.fileWrappers[@"main.py"] == menuItem.representedObject) {
+        // this is the main.py file. Don't allow delete
+        return NO;
+    } else {
+        return YES;
+    }
+}
+
 @end
 
 @implementation FilesOutlineView
