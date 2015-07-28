@@ -184,9 +184,9 @@
     }];
     
     _outlineView = [NSOutlineView new];
-    [_verticalSplitView addSubview:_outlineView];
     _outlineView.dataSource = self.outlineDataSource;
     _outlineView.delegate = self;
+    _outlineView.headerView = nil;
     _outlineView.backgroundColor = [NSColor colorWithSRGBRed:0.200 green:0.204 blue:0.204 alpha:1];
     
     NSTableColumn *iconColumn = [[NSTableColumn alloc] initWithIdentifier:@"icon"];
@@ -206,6 +206,10 @@
     });
     filenameColumn.resizingMask = NSTableColumnAutoresizingMask;
     [_outlineView addTableColumn:filenameColumn];
+    
+    NSScrollView *outlineScrollView = [[NSScrollView alloc] init];
+    outlineScrollView.documentView = _outlineView;
+    [_verticalSplitView addSubview:outlineScrollView];
 
     _horizontalSplitView = [NSSplitView new];
     _horizontalSplitView.dividerStyle = NSSplitViewDividerStyleThin;
