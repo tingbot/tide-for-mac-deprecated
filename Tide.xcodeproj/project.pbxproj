@@ -30,6 +30,7 @@
 		56CF16CD1B507ED100E59D5E /* CustomSplitView.m in Sources */ = {isa = PBXBuildFile; fileRef = 56CF16CC1B507ED100E59D5E /* CustomSplitView.m */; };
 		56D111241AD9675700C99ACF /* NetworkDeviceDiscoverer.m in Sources */ = {isa = PBXBuildFile; fileRef = 56D111231AD9675700C99ACF /* NetworkDeviceDiscoverer.m */; };
 		56D1D2801A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 56D1D27F1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m */; };
+		56DFF9421B681A4500EF6F57 /* NSImage+MXUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DFF9411B681A4500EF6F57 /* NSImage+MXUtilities.m */; };
 		56E5B8251B4C49F400048E18 /* SDL_image.framework in Resources */ = {isa = PBXBuildFile; fileRef = 56E5B8201B4C49F400048E18 /* SDL_image.framework */; };
 		56E5B8261B4C49F400048E18 /* SDL_mixer.framework in Resources */ = {isa = PBXBuildFile; fileRef = 56E5B8211B4C49F400048E18 /* SDL_mixer.framework */; };
 		56E5B8271B4C49F400048E18 /* SDL_ttf.framework in Resources */ = {isa = PBXBuildFile; fileRef = 56E5B8221B4C49F400048E18 /* SDL_ttf.framework */; };
@@ -101,6 +102,8 @@
 		56D111231AD9675700C99ACF /* NetworkDeviceDiscoverer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkDeviceDiscoverer.m; sourceTree = "<group>"; };
 		56D1D27E1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemOutlineViewDataSource.h; sourceTree = "<group>"; };
 		56D1D27F1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemOutlineViewDataSource.m; sourceTree = "<group>"; };
+		56DFF9401B681A4500EF6F57 /* NSImage+MXUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSImage+MXUtilities.h"; sourceTree = "<group>"; };
+		56DFF9411B681A4500EF6F57 /* NSImage+MXUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSImage+MXUtilities.m"; sourceTree = "<group>"; };
 		56E5B8201B4C49F400048E18 /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_image.framework; sourceTree = "<group>"; };
 		56E5B8211B4C49F400048E18 /* SDL_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_mixer.framework; sourceTree = "<group>"; };
 		56E5B8221B4C49F400048E18 /* SDL_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_ttf.framework; sourceTree = "<group>"; };
@@ -181,6 +184,8 @@
 				56D1D27F1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m */,
 				564772131A63D9F500498A35 /* NSFileWrapper+QuicklookURL.h */,
 				564772141A63D9F500498A35 /* NSFileWrapper+QuicklookURL.m */,
+				56DFF9401B681A4500EF6F57 /* NSImage+MXUtilities.h */,
+				56DFF9411B681A4500EF6F57 /* NSImage+MXUtilities.m */,
 				5629F0131ABF616B00DEBC4F /* tbtool */,
 				561F55081B602A92000CB2B9 /* tingbot.key */,
 				561F55091B602A92000CB2B9 /* tingbot.key.pub */,
@@ -403,6 +408,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				56DFF9421B681A4500EF6F57 /* NSImage+MXUtilities.m in Sources */,
 				5682BD111A2E2B0400CF08DB /* NSViewDocument.m in Sources */,
 				56D1D2801A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m in Sources */,
 				56CF16CD1B507ED100E59D5E /* CustomSplitView.m in Sources */,

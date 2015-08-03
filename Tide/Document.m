@@ -23,6 +23,7 @@
 #import "NetworkDeviceDiscoverer.h"
 #import "ConsoleView.h"
 #import "CustomSplitView.h"
+#import "NSImage+MXUtilities.h"
 
 @import Quartz;
 
@@ -124,8 +125,11 @@
     }];
     
     NSButton *runButton = [[NSButton alloc] init];
+    runButton.buttonType = NSMomentaryChangeButton;
     runButton.bordered = NO;
     runButton.image = [NSImage imageNamed:@"play-pink"];
+    runButton.alternateImage = [[NSImage imageNamed:@"play-pink"] tintedImageWithColor:
+                                [NSColor colorWithSRGBRed:0.525 green:0.063 blue:0.153 alpha:1]];
     runButton.toolTip = @"Run";
     [topBar addSubview:runButton];
     [runButton mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -137,8 +141,11 @@
     runButton.action = @selector(runButtonPressed:);
     
     NSButton *stopButton = [[NSButton alloc] init];
+    stopButton.buttonType = NSMomentaryChangeButton;
     stopButton.bordered = NO;
     stopButton.image = [NSImage imageNamed:@"stop-pink"];
+    stopButton.alternateImage = [[NSImage imageNamed:@"stop-pink"] tintedImageWithColor:
+                                 [NSColor colorWithSRGBRed:0.525 green:0.063 blue:0.153 alpha:1]];
     stopButton.toolTip = @"Stop";
     [topBar addSubview:stopButton];
     [stopButton mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -261,7 +268,7 @@
 
 #pragma mark UI Callbacks
 
-- (IBAction)runButtonPressed:(id)sender {
+- (IBAction)runButtonPressed:(NSButton *)sender {
     NSString *runDirectory = [NSTemporaryDirectory() stringByAppendingString:[[NSUUID UUID] UUIDString]];
     NSURL *runDirectoryURL = [NSURL fileURLWithPath:runDirectory];
     
