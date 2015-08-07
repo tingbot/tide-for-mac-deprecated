@@ -1,5 +1,4 @@
-import sys, functools, operator, time, traceback
-from collections import namedtuple
+import sys, operator, time, traceback
 from .utils import Struct, CallbackList
 from . import error
 

@@ -1,8 +1,5 @@
+import os, time, numbers
 import pygame
-import numbers
-import operator
-import itertools
-import os, time
 from . import platform_specific
 from .utils import cached_property
 

@@ -1,8 +1,6 @@
-import pygame.image
-import pygame.transform
-import pygame.font
+import os
+import pygame.image, pygame.transform, pygame.font
 from . import graphics
-import os, sys
 
 sad_tingbot_string = '''
 #########################
@@ -36,7 +34,7 @@ sad_tingbot_string = '''
 
 def sad_tingbot_image():
     result = pygame.image.fromstring(sad_tingbot_string, (25, 26), 'P')
-    result.set_palette_at(ord('#'), [0,0,0])
+    result.set_palette_at(ord('#'), (0,0,0))
     result.set_palette_at(ord(' '), (255,255,255))
 
     result = pygame.transform.scale(result, (50, 52))
