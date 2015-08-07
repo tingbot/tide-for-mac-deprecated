@@ -155,13 +155,19 @@ class Surface(object):
         scale = _scale(scale)
         image_size = image.size
 
+        surface = image.surface
+
         if scale != (1, 1):
             image_size = _xy_multiply(image_size, scale)
-            image = pygame.transform.smoothscale(image, image_size)
+            image_size = tuple(int(d) for d in image_size)
+            try:
+                surface = pygame.transform.smoothscale(surface, image_size)
+            except ValueError:
+                surface = pygame.transform.scale(surface, image_size)
 
         xy = _topleft_from_aligned_xy(xy, align, image_size, self.size)
 
-        self.surface.blit(image.surface, xy)
+        self.surface.blit(surface, xy)
 
 
 class Screen(Surface):
