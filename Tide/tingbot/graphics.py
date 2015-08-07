@@ -210,7 +210,7 @@ class Image(Surface):
     def load(cls, filename):
         # if it's a gif, load it using the special GIFImage class
         _, extension = os.path.splitext(filename)
-        if extension.lower() == 'gif':
+        if extension.lower() == '.gif':
             return GIFImage(filename=filename)
 
         pygame.init()
