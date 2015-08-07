@@ -2,7 +2,7 @@ import pygame
 import numbers
 import operator
 import itertools
-import os
+import os, time
 from . import platform_specific
 from .utils import cached_property
 
@@ -202,12 +202,103 @@ screen = Screen()
 class Image(Surface):
     @classmethod
     def load(cls, filename):
+        # if it's a gif, load it using the special GIFImage class
+        _, extension = os.path.splitext(filename)
+        if extension.lower() == 'gif':
+            return GIFImage(filename=filename)
+
         pygame.init()
         surface = pygame.image.load(filename)
         surface = surface.convert_alpha()
+
         return cls(surface)
 
     def __init__(self, surface=None, size=None):
         pygame.init()
         surface = surface or pygame.Surface(size)
         super(Image, self).__init__(surface)
+
+
+class GIFImage(Surface):
+    def __init__(self, filename):
+        pygame.init()
+        from PIL import Image as PILImage
+        self.frames = self._get_frames(PILImage.open(filename))
+        self.total_duration = sum(f[1] for f in self.frames)
+
+    def _get_frames(self, pil_image):
+        result = []
+
+        pal = pil_image.getpalette()
+        base_palette = []
+        for i in range(0, len(pal), 3):
+            rgb = pal[i:i+3]
+            base_palette.append(rgb)
+
+        all_tiles = []
+        try:
+            while 1:
+                if not pil_image.tile:
+                    pil_image.seek(0)
+                if pil_image.tile:
+                    all_tiles.append(pil_image.tile[0][3][0])
+                pil_image.seek(pil_image.tell()+1)
+        except EOFError:
+            pil_image.seek(0)
+
+        all_tiles = tuple(set(all_tiles))
+
+        while 1:
+            try:
+                duration = pil_image.info["duration"] * 0.001
+            except KeyError:
+                duration = 0.1
+
+            if all_tiles:
+                if all_tiles in ((6,), (7,)):
+                    pal = pil_image.getpalette()
+                    palette = []
+                    for i in range(0, len(pal), 3):
+                        rgb = pal[i:i+3]
+                        palette.append(rgb)
+                elif all_tiles in ((7, 8), (8, 7)):
+                    pal = pil_image.getpalette()
+                    palette = []
+                    for i in range(0, len(pal), 3):
+                        rgb = pal[i:i+3]
+                        palette.append(rgb)
+                else:
+                    palette = base_palette
+            else:
+                palette = base_palette
+
+            pygame_image = pygame.image.fromstring(pil_image.tostring(), pil_image.size, pil_image.mode)
+            pygame_image.set_palette(palette)
+
+            if "transparency" in pil_image.info:
+                pygame_image.set_colorkey(pil_image.info["transparency"])
+
+            result.append([pygame_image, duration])
+            try:
+                pil_image.seek(pil_image.tell()+1)
+            except EOFError:
+                break
+
+        return result
+
+    @property
+    def surface(self):
+        current_time = time.time()
+
+        if not hasattr(self, 'start_time'):
+            self.start_time = current_time
+
+        gif_time = (current_time - self.start_time) % self.total_duration
+
+        frame_time = 0
+
+        for surface, duration in self.frames:
+            frame_time += duration
+
+            if frame_time >= gif_time:
+                return surface
