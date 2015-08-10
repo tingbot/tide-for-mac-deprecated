@@ -296,7 +296,10 @@ class GIFImage(Surface):
         if not hasattr(self, 'start_time'):
             self.start_time = current_time
 
-        gif_time = (current_time - self.start_time) % self.total_duration
+        try:
+            gif_time = (current_time - self.start_time) % self.total_duration
+        except ZeroDivisionError:
+            gif_time = 0
 
         frame_time = 0
 
