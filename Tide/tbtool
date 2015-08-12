@@ -27,6 +27,8 @@ def open_ssh_session(hostname):
     subprocess.check_call([
         'ssh',
         '-nNf4',
+        '-o', 'UserKnownHostsFile=/dev/null',
+        '-o', 'StrictHostKeyChecking=no',
         '-i', tingbot_key_path(),
         '-o', 'ControlMaster=yes',
         '-o', 'ControlPath=%s' % control_path,
