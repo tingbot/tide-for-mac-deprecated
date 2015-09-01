@@ -80,7 +80,7 @@
     
     NSFileWrapper *fileWrapper = item;
     
-    if ([tableColumn.title isEqual:@"Icon"]) {
+    if ([tableColumn.identifier isEqual:@"icon"]) {
         if ([fileWrapper isDirectory]) {
             return [NSImage imageNamed:@"FolderSidebarIcon"];
         } else if ([@[ @"jpg", @"png", @"jpeg", @"gif" ] containsObject:

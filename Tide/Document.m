@@ -201,7 +201,6 @@
     _outlineView.backgroundColor = [NSColor colorWithSRGBRed:0.200 green:0.204 blue:0.204 alpha:1];
     
     NSTableColumn *iconColumn = [[NSTableColumn alloc] initWithIdentifier:@"icon"];
-    iconColumn.title = @"Icon";
     iconColumn.dataCell = [NSImageCell new];
     iconColumn.width = 31;
     iconColumn.minWidth = 30;
@@ -209,7 +208,6 @@
     _outlineView.outlineTableColumn = iconColumn;
     
     NSTableColumn *filenameColumn = [[NSTableColumn alloc] initWithIdentifier:@"filename"];
-    filenameColumn.title = @"Filename";
     filenameColumn.dataCell = ({
         NSTextFieldCell *c = [NSTextFieldCell new];
         c.textColor = [NSColor whiteColor];
@@ -491,7 +489,7 @@
 
 - (void)saveEditingDocumentChanges
 {
-    if (!self.editingDocument.documentEdited) {
+    if (!self.editingDocument.isDocumentEdited) {
         return;
     }
     
