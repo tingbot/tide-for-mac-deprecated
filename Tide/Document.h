@@ -10,6 +10,8 @@
 
 @interface Document : NSDocument
 
+- (void)run:(id)sender;
+- (void)stop:(id)sender;
 
 @end
 

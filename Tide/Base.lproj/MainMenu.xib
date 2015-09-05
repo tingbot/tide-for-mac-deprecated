@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6250"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
@@ -334,6 +334,23 @@
                                         </menuItem>
                                     </items>
                                 </menu>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="App" id="aPa-6P-8JG">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="App" id="bnz-Ir-uWE">
+                        <items>
+                            <menuItem title="Run" keyEquivalent="r" id="pSm-gQ-UdX">
+                                <connections>
+                                    <action selector="run:" target="-1" id="1EQ-HB-MIl"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Stop" keyEquivalent="." id="9H0-5d-Hj1">
+                                <connections>
+                                    <action selector="stop:" target="-1" id="gEc-i9-79n"/>
+                                </connections>
                             </menuItem>
                         </items>
                     </menu>

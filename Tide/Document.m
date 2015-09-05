@@ -138,7 +138,7 @@
         make.left.equalTo(topBar).offset(21);
     }];
     runButton.target = self;
-    runButton.action = @selector(runButtonPressed:);
+    runButton.action = @selector(run:);
     
     NSButton *stopButton = [[NSButton alloc] init];
     stopButton.buttonType = NSMomentaryChangeButton;
@@ -152,7 +152,7 @@
         make.edges.equalTo(runButton);
     }];
     stopButton.target = self;
-    stopButton.action = @selector(stopButtonPressed:);
+    stopButton.action = @selector(stop:);
     
     RACSignal *runningTaskSignal = [RACObserve(self, runningTask) map:^id(id value) {
         return @(value != nil);
@@ -266,7 +266,11 @@
 
 #pragma mark UI Callbacks
 
-- (IBAction)runButtonPressed:(NSButton *)sender {
+- (IBAction)run:(id)sender {
+    if (self.runningTask) {
+        [self stop:nil];
+    }
+    
     NSString *runDirectory = [NSTemporaryDirectory() stringByAppendingString:[[NSUUID UUID] UUIDString]];
     NSURL *runDirectoryURL = [NSURL fileURLWithPath:runDirectory];
     
@@ -286,7 +290,7 @@
     }
 }
 
-- (void)stopButtonPressed:(id)sender {
+- (void)stop:(id)sender {
     [self.runningTask terminate];
 }
 
