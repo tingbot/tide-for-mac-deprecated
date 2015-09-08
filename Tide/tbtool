@@ -99,7 +99,7 @@ def run(app_path, hostname):
             'ssh',
             '-o', 'ControlPath=%s' % control_path,
             'pi@%s' % hostname,
-            'tbopen "%s"' % app_install_location])
+            'tbopen --follow "%s"' % app_install_location])
     finally:
         close_ssh_session(control_path)
 
