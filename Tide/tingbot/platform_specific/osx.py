@@ -4,9 +4,16 @@ import os
 def fixup_window():
     try:
         from Cocoa import NSApplication, NSWindow, NSImageView, NSImage, NSRect, NSColor
+        import objc
     except ImportError:
         print 'Skipping OS X window fixup'
         return
+
+    SDL_QuartzWindow = objc.lookUpClass('SDL_QuartzWindow')
+
+    class SDL_QuartzWindow(objc.Category(SDL_QuartzWindow)):
+        def canBecomeKeyWindow(self):
+            return True
 
     app = NSApplication.sharedApplication()
 
