@@ -5,8 +5,9 @@ class Button(object):
     def __init__(self, pin):
         self.pin = pin
         self.callbacks = CallbackList()
+        self.was_pressed = False
 
-    def event(self):
+    def event(self, pin):
         if GPIO.input(self.pin):
             self.was_pressed = True
 
