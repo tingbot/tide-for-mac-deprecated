@@ -50,7 +50,6 @@ def simulate(app_path):
 
     environment = os.environ.copy()
     environment['PYTHONPATH'] = python_path
-    environment['DYLD_FALLBACK_FRAMEWORK_PATH'] = python_path
 
     main_file = os.path.abspath(os.path.join(app_path, 'main'))
 

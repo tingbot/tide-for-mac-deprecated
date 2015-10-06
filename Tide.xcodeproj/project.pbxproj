@@ -21,6 +21,8 @@
 		5632709419DC17100035768D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5632709219DC17100035768D /* MainMenu.xib */; };
 		563270A019DC17100035768D /* TideTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5632709F19DC17100035768D /* TideTests.m */; };
 		564772151A63D9F500498A35 /* NSFileWrapper+QuicklookURL.m in Sources */ = {isa = PBXBuildFile; fileRef = 564772141A63D9F500498A35 /* NSFileWrapper+QuicklookURL.m */; };
+		567E53CB1BC3C86A00287C57 /* libpng16.16.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 567E53CA1BC3C86A00287C57 /* libpng16.16.dylib */; };
+		567E53CD1BC3C87B00287C57 /* libfreetype.6.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 567E53CC1BC3C87B00287C57 /* libfreetype.6.dylib */; };
 		5682BD0E1A2E2AEB00CF08DB /* CodeDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5682BD0D1A2E2AEB00CF08DB /* CodeDocument.m */; };
 		5682BD111A2E2B0400CF08DB /* NSViewDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5682BD101A2E2B0400CF08DB /* NSViewDocument.m */; };
 		5682BD141A30682400CF08DB /* QuickLookDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5682BD131A30682400CF08DB /* QuickLookDocument.m */; };
@@ -87,6 +89,8 @@
 		5632709F19DC17100035768D /* TideTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TideTests.m; sourceTree = "<group>"; };
 		564772131A63D9F500498A35 /* NSFileWrapper+QuicklookURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileWrapper+QuicklookURL.h"; sourceTree = "<group>"; };
 		564772141A63D9F500498A35 /* NSFileWrapper+QuicklookURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileWrapper+QuicklookURL.m"; sourceTree = "<group>"; };
+		567E53CA1BC3C86A00287C57 /* libpng16.16.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libpng16.16.dylib; sourceTree = "<group>"; };
+		567E53CC1BC3C87B00287C57 /* libfreetype.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libfreetype.6.dylib; sourceTree = "<group>"; };
 		5682BD0C1A2E2AEB00CF08DB /* CodeDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeDocument.h; sourceTree = "<group>"; };
 		5682BD0D1A2E2AEB00CF08DB /* CodeDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeDocument.m; sourceTree = "<group>"; };
 		5682BD0F1A2E2B0400CF08DB /* NSViewDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSViewDocument.h; sourceTree = "<group>"; };
@@ -238,6 +242,8 @@
 				56E5B8211B4C49F400048E18 /* SDL_mixer.framework */,
 				56E5B8221B4C49F400048E18 /* SDL_ttf.framework */,
 				56E5B8231B4C49F400048E18 /* SDL.framework */,
+				567E53CA1BC3C86A00287C57 /* libpng16.16.dylib */,
+				567E53CC1BC3C87B00287C57 /* libfreetype.6.dylib */,
 			);
 			name = "Pygame Dependencies";
 			sourceTree = "<group>";
@@ -272,6 +278,7 @@
 				5632708119DC170F0035768D /* Resources */,
 				7BAB7418D23844D1B8EB4BA7 /* Copy Pods Resources */,
 				56E5B82C1B4C4E1200048E18 /* CopyFiles */,
+				567E53C71BC052FD00287C57 /* Fix up library paths */,
 			);
 			buildRules = (
 			);
@@ -311,6 +318,7 @@
 				TargetAttributes = {
 					5632708219DC170F0035768D = {
 						CreatedOnToolsVersion = 6.0.1;
+						DevelopmentTeam = BV77CB5Z2C;
 					};
 					5632709819DC17100035768D = {
 						CreatedOnToolsVersion = 6.0.1;
@@ -354,6 +362,8 @@
 				56E5B8271B4C49F400048E18 /* SDL_ttf.framework in Resources */,
 				56E5B8281B4C49F400048E18 /* SDL.framework in Resources */,
 				56E5B8261B4C49F400048E18 /* SDL_mixer.framework in Resources */,
+				567E53CD1BC3C87B00287C57 /* libfreetype.6.dylib in Resources */,
+				567E53CB1BC3C86A00287C57 /* libpng16.16.dylib in Resources */,
 				5690AC961AE819F8008CB34B /* Icon.icns in Resources */,
 				5632709119DC170F0035768D /* Images.xcassets in Resources */,
 				56F84F2F1A82D4B20011BDFF /* tingbot in Resources */,
@@ -371,6 +381,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		567E53C71BC052FD00287C57 /* Fix up library paths */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Fix up library paths";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "RESOURCES_DIR=\"${BUILT_PRODUCTS_DIR}\"/\"${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"\n\nset -o errexit\nset -o xtrace\n\ncd \"${RESOURCES_DIR}\"\n\n(\ncd pygame\n\nfor f in *.so; do\n    install_name_tool -change \\\n        '@executable_path/../Frameworks/SDL.framework/Versions/A/SDL' \\\n        '@loader_path/../SDL.framework/Versions/A/SDL' \\\n        \"$f\"\n    install_name_tool -change \\\n        '@executable_path/../Frameworks/SDL_ttf.framework/Versions/A/SDL_ttf' \\\n        '@loader_path/../SDL_ttf.framework/Versions/A/SDL_ttf' \\\n        \"$f\"\ndone\n)\n\ninstall_name_tool -change \\\n    '@executable_path/../Frameworks/SDL.framework/Versions/A/SDL' \\\n    '@loader_path/../../../SDL.framework/Versions/A/SDL' \\\n    SDL_ttf.framework/Versions/A/SDL_ttf\n\ninstall_name_tool -change \\\n    '/usr/X11/lib/libfreetype.6.dylib' \\\n    '@loader_path/../../../libfreetype.6.dylib' \\\n    SDL_ttf.framework/Versions/A/SDL_ttf\n\ninstall_name_tool -change \\\n    '/usr/local/lib/libpng16.16.dylib' \\\n    '@loader_path/libpng16.16.dylib' \\\n    'libfreetype.6.dylib'\n";
+			showEnvVarsInLog = 0;
+		};
 		7BAB7418D23844D1B8EB4BA7 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -473,7 +498,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -515,7 +540,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -545,7 +570,12 @@
 				);
 				INFOPLIST_FILE = Tide/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Tide",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -560,7 +590,12 @@
 				);
 				INFOPLIST_FILE = Tide/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Tide",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
