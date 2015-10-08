@@ -49,8 +49,14 @@ def mouse_up(pos):
     active_hit_areas[:] = []
 
 class touch(object):
-    def __init__(self, xy, size=(50, 50), align='center'):
+    def __init__(self, xy=None, size=None, align='center'):
         from .graphics import _topleft_from_aligned_xy, screen
+
+        if xy is None and size is None:
+            xy = (160, 120)
+            size = screen.size
+        elif size is None:
+            size = (50, 50)
 
         topleft = _topleft_from_aligned_xy(xy=xy, align=align, size=size, surface_size=screen.size)
 
