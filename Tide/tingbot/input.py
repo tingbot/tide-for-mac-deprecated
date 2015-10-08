@@ -22,6 +22,12 @@ def poll():
         elif event.type == pygame.MOUSEBUTTONUP:
             mouse_up(pygame.mouse.get_pos())
 
+        elif event.type == pygame.KEYDOWN:
+            command_down = (event.mod & 1024) or (event.mod & 2048)
+
+            if event.key == 113 and command_down:
+                sys.exit()
+
         elif event.type == pygame.QUIT:
             sys.exit()
 
