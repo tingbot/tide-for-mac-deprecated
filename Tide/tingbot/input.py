@@ -8,7 +8,7 @@ active_hit_areas = []
 
 HitArea = namedtuple('HitArea', ('rect', 'callback'))
 
-def check_for_quit_event():
+def poll():
     if not pygame.display.get_init():
         return
 

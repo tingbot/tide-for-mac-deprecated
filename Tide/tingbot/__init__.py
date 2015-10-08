@@ -10,7 +10,7 @@ def run(loop=None):
     if loop is not None:
         every(seconds=1.0/30)(loop)
 
-    main_run_loop.add_wait_callback(input.check_for_quit_event)
+    main_run_loop.add_wait_callback(input.poll)
     main_run_loop.add_after_action_callback(screen.after_loop)
 
     main_run_loop.run()
