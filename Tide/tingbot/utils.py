@@ -58,3 +58,24 @@ class cached_property(object):
             value = self.func(obj)
             obj.__dict__[self.__name__] = value
         return value
+
+
+def call_with_optional_arguments(func, **kwargs):
+    '''
+    calls a function with the arguments **kwargs, but only those that the function defines.
+    e.g.
+
+    def fn(a, b):
+        print a, b
+
+    call_with_optional_arguments(fn, a=2, b=3, c=4)  # because fn doesn't accept `c`, it is discarded
+    '''
+
+    import inspect
+    function_arg_names = inspect.getargspec(func).args
+
+    for arg in kwargs:
+        if arg not in function_arg_names:
+            del kwargs[arg]
+
+    func(**kwargs)
