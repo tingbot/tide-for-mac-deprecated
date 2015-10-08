@@ -1,9 +1,6 @@
 import platform
-from . import osx, pi
 
 if platform.system() == 'Darwin':
-    fixup_window = osx.fixup_window
-    fixup_env = osx.fixup_env
+    from osx import fixup_env, fixup_window, register_button_callback
 else:
-    fixup_window = pi.fixup_window
-    fixup_env = pi.fixup_env
+    from pi import fixup_env, fixup_window, register_button_callback
