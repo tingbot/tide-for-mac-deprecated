@@ -1,7 +1,9 @@
 from . import platform_specific, input
 
-from .graphics import screen
+from .graphics import screen, Surface, Image
 from .run_loop import main_run_loop, every
+from .input import touch
+from .button import press
 
 platform_specific.fixup_env()
 
@@ -14,3 +16,5 @@ def run(loop=None):
     main_run_loop.add_after_action_callback(screen.after_loop)
 
     main_run_loop.run()
+
+__all__ = ['run', 'screen', 'Surface', 'Image', 'every', 'touch', 'press']
