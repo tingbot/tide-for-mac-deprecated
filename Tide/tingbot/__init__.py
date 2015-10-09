@@ -12,8 +12,11 @@ def run(loop=None):
     if loop is not None:
         every(seconds=1.0/30)(loop)
 
+    main_run_loop.add_after_action_callback(screen.update_if_needed)
+
     main_run_loop.add_wait_callback(input.poll)
-    main_run_loop.add_after_action_callback(screen.after_loop)
+    # in case screen updates happen in input.poll...
+    main_run_loop.add_wait_callback(screen.update_if_needed)
 
     main_run_loop.run()
 

@@ -194,7 +194,7 @@ class Screen(Surface):
         super(Screen, self).image(*args, **kwargs)
         self.needs_update = True
 
-    def after_loop(self):
+    def update_if_needed(self):
         if self.needs_update:
             self.update()
 
