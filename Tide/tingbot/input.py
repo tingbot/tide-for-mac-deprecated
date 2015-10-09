@@ -55,6 +55,7 @@ class touch(object):
         if xy is None and size is None:
             xy = (160, 120)
             size = screen.size
+            align = 'center'
         elif size is None:
             size = (50, 50)
 
