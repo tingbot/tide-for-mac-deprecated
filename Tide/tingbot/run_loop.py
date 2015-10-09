@@ -40,20 +40,27 @@ class RunLoop(object):
     def run(self):
         while True:
             start_time = time.time()
-            next_timer = self.timers.pop()
 
-            try:
-                self._wait(next_timer.next_fire_time)
+            if len(self.timers) > 0:
+                next_timer = self.timers.pop()
 
-                self._before_action_callbacks()
-                next_timer.action()
-                self._after_action_callbacks()
-            except Exception as e:
-                self._error(e)
-            finally:
-                if next_timer.repeating:
-                    next_timer.next_fire_time = start_time + next_timer.period
-                    self.schedule(next_timer)
+                try:
+                    self._wait(next_timer.next_fire_time)
+
+                    self._before_action_callbacks()
+                    next_timer.action()
+                    self._after_action_callbacks()
+                except Exception as e:
+                    self._error(e)
+                finally:
+                    if next_timer.repeating:
+                        next_timer.next_fire_time = start_time + next_timer.period
+                        self.schedule(next_timer)
+            else:
+                try:
+                    self._wait(start_time + 1)
+                except Exception as e:
+                    self._error(e)
 
     def add_wait_callback(self, callback):
         self._wait_callbacks.add(callback)
