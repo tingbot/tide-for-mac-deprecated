@@ -74,7 +74,7 @@ def call_with_optional_arguments(func, **kwargs):
     import inspect
     function_arg_names = inspect.getargspec(func).args
 
-    for arg in kwargs:
+    for arg in kwargs.keys():
         if arg not in function_arg_names:
             del kwargs[arg]
 
