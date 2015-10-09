@@ -103,6 +103,17 @@ def _topleft_from_aligned_xy(xy, align, size, surface_size):
     anchor_offset = _xy_multiply(_anchor(align), size)
     return _xy_subtract(xy, anchor_offset)
 
+class ImageCache(object):
+    def __init__(self):
+        self.cache = {}
+
+    def image_for_filename(self, filename):
+        if filename not in self.cache:
+            self.cache[filename] = Image.load(filename)
+
+        return self.cache[filename]
+
+image_cache = ImageCache()
 
 class Surface(object):
     def __init__(self, surface=None):
@@ -149,6 +160,9 @@ class Surface(object):
         self.surface.fill(_color(color), xy+size)
 
     def image(self, image, xy=None, scale=1, align='center'):
+        if isinstance(image, basestring):
+            image = image_cache.image_for_filename(image)
+
         scale = _scale(scale)
         image_size = image.size
 
