@@ -168,6 +168,10 @@ class Surface(object):
 
 
 class Screen(Surface):
+    def __init__(self):
+        super(Screen, self).__init__()
+        self.needs_update = False
+
     def _create_surface(self):
         pygame.init()
         surface = pygame.display.set_mode((320, 240))
