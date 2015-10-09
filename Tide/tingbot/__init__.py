@@ -20,4 +20,4 @@ def run(loop=None):
 
     main_run_loop.run()
 
-__all__ = ['run', 'screen', 'Surface', 'Image', 'every', 'touch', 'press']
+__all__ = ['run', 'screen', 'Surface', 'Image', 'every', 'touch', 'press', 'button']
