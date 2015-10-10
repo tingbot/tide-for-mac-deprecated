@@ -1,6 +1,8 @@
 import os
-from Cocoa import *
-from Quartz import *
+from Cocoa import (
+    NSImageView, NSView, NSRectFill, NSColor, NSApplication, NSNotificationCenter, NSRect, NSImage,
+    NSWindow, NSUserDefaults)
+from Quartz import CGPointZero, CGRectMake
 import objc
 from ..utils import cached_property
 
