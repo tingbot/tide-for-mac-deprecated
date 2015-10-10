@@ -26,7 +26,7 @@ class TingbotButton(NSView):
         NSColor.colorWithWhite_alpha_(0.3, 1.0).set()
 
         if self.is_down:
-            fill_rect.size.height /= 2
+            fill_rect.size.height *= 0.8
 
         NSRectFill(fill_rect)
 
