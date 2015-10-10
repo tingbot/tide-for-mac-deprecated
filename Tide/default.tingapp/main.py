@@ -1,5 +1,5 @@
 import tingbot
-from tingbot import screen
+from tingbot import *
 
 # setup code here
 
