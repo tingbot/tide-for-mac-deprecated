@@ -2,7 +2,7 @@ import os
 from Cocoa import (
     NSImageView, NSView, NSRectFill, NSColor, NSApplication, NSNotificationCenter, NSRect, NSImage,
     NSWindow, NSUserDefaults)
-from Quartz import CGPointZero, CGRectMake
+from Quartz import CGPointZero, CGRectMake, CGPointMake
 import objc
 from ..utils import cached_property
 
@@ -62,6 +62,17 @@ class WindowController(object):
 
         self.image_window.makeKeyAndOrderFront_(None)
         self.image_window.addChildWindow_ordered_(self.screen_window, 1)
+
+        image_window_frame = self.image_window.frame().copy()
+        if 'TIDE_WINDOW_FRAME' in os.environ:
+            left, top, width, height = (float(x) for x in os.environ['TIDE_WINDOW_FRAME'].split(','))
+            # image_window_frame.
+            print left, top, width, height
+
+            image_window_left = left + width + 20
+            image_window_top = top + height/2 + 180
+
+            self.image_window.cascadeTopLeftFromPoint_(CGPointMake(image_window_left, image_window_top))
 
         def window_did_close(notification):
             app.terminate_(None)

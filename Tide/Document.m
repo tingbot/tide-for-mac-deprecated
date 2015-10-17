@@ -294,6 +294,12 @@ static NSWindow *__weak lastOpenedWindow = nil;
     
     Device *device = _runDestinationDropdown.selectedItem.representedObject;
     
+    NSRect windowRect = self.windowControllers.lastObject.window.frame;
+    NSString *windowDimensions = [NSString stringWithFormat:@"%f,%f,%f,%f",
+                                  windowRect.origin.x, windowRect.origin.y,
+                                  windowRect.size.width, windowRect.size.height];
+    setenv("TIDE_WINDOW_FRAME", windowDimensions.UTF8String, 1);
+    
     self.runningTask = [device run:runDirectory error:&error];
     
     if ([_horizontalSplitView isSubviewCollapsed:_consoleView]) {
