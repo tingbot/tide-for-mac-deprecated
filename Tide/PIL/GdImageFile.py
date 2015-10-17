@@ -25,10 +25,17 @@
 
 __version__ = "0.1"
 
-import ImageFile, ImagePalette
+from PIL import ImageFile, ImagePalette, _binary
+from PIL._util import isPath
 
-def i16(c):
-    return ord(c[1]) + (ord(c[0])<<8)
+try:
+    import builtins
+except ImportError:
+    import __builtin__
+    builtins = __builtin__
+
+i16 = _binary.i16be
+
 
 ##
 # Image plugin for the GD uncompressed format.  Note that this format
@@ -46,7 +53,7 @@ class GdImageFile(ImageFile.ImageFile):
         # Header
         s = self.fp.read(775)
 
-        self.mode = "L" # FIXME: "P"
+        self.mode = "L"  # FIXME: "P"
         self.size = i16(s[0:2]), i16(s[2:4])
 
         # transparency index
@@ -56,7 +63,8 @@ class GdImageFile(ImageFile.ImageFile):
 
         self.palette = ImagePalette.raw("RGB", s[7:])
 
-        self.tile = [("raw", (0,0)+self.size, 775, ("L", 0, -1))]
+        self.tile = [("raw", (0, 0)+self.size, 775, ("L", 0, -1))]
+
 
 ##
 # Load texture from a GD image file.
@@ -67,15 +75,14 @@ class GdImageFile(ImageFile.ImageFile):
 # @return An image instance.
 # @exception IOError If the image could not be read.
 
-def open(fp, mode = "r"):
+def open(fp, mode="r"):
 
     if mode != "r":
         raise ValueError("bad mode")
 
-    if type(fp) == type(""):
-        import __builtin__
+    if isPath(fp):
         filename = fp
-        fp = __builtin__.open(fp, "rb")
+        fp = builtins.open(fp, "rb")
     else:
         filename = ""
 

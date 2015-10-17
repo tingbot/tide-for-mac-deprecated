@@ -30,12 +30,16 @@
 # See the README file for information on usage and redistribution.
 #
 
-import Image, ImageColor
+import numbers
+
+from PIL import Image, ImageColor
+from PIL._util import isStringType
 
 try:
     import warnings
 except ImportError:
     warnings = None
+
 
 ##
 # A simple 2D drawing interface for PIL images.
@@ -43,7 +47,7 @@ except ImportError:
 # Application code should use the <b>Draw</b> factory, instead of
 # directly.
 
-class ImageDraw:
+class ImageDraw(object):
 
     ##
     # Create a drawing instance.
@@ -58,7 +62,7 @@ class ImageDraw:
     def __init__(self, im, mode=None):
         im.load()
         if im.readonly:
-            im._copy() # make it writable
+            im._copy()  # make it writeable
         blend = 0
         if mode is None:
             mode = im.mode
@@ -82,7 +86,7 @@ class ImageDraw:
             # FIXME: fix Fill2 to properly support matte for I+F images
             self.fontmode = "1"
         else:
-            self.fontmode = "L" # aliasing is okay for other modes
+            self.fontmode = "L"  # aliasing is okay for other modes
         self.fill = 0
         self.font = None
 
@@ -96,9 +100,9 @@ class ImageDraw:
                 "'setink' is deprecated; use keyword arguments instead",
                 DeprecationWarning, stacklevel=2
                 )
-        if Image.isStringType(ink):
+        if isStringType(ink):
             ink = ImageColor.getcolor(ink, self.mode)
-        if self.palette and not Image.isNumberType(ink):
+        if self.palette and not isinstance(ink, numbers.Number):
             ink = self.palette.getcolor(ink)
         self.ink = self.draw.draw_ink(ink, self.mode)
 
@@ -127,7 +131,7 @@ class ImageDraw:
     def getfont(self):
         if not self.font:
             # FIXME: should add a font repository
-            import ImageFont
+            from PIL import ImageFont
             self.font = ImageFont.load_default()
         return self.font
 
@@ -139,15 +143,15 @@ class ImageDraw:
                 ink = self.ink
         else:
             if ink is not None:
-                if Image.isStringType(ink):
+                if isStringType(ink):
                     ink = ImageColor.getcolor(ink, self.mode)
-                if self.palette and not Image.isNumberType(ink):
+                if self.palette and not isinstance(ink, numbers.Number):
                     ink = self.palette.getcolor(ink)
                 ink = self.draw.draw_ink(ink, self.mode)
             if fill is not None:
-                if Image.isStringType(fill):
+                if isStringType(fill):
                     fill = ImageColor.getcolor(fill, self.mode)
-                if self.palette and not Image.isNumberType(fill):
+                if self.palette and not isinstance(fill, numbers.Number):
                     fill = self.palette.getcolor(fill)
                 fill = self.draw.draw_ink(fill, self.mode)
         return ink, fill
@@ -252,7 +256,20 @@ class ImageDraw:
     ##
     # Draw text.
 
+    def _multiline_check(self, text):
+        split_character = "\n" if isinstance(text, type("")) else b"\n"
+
+        return split_character in text
+
+    def _multiline_split(self, text):
+        split_character = "\n" if isinstance(text, type("")) else b"\n"
+
+        return text.split(split_character)
+
     def text(self, xy, text, fill=None, font=None, anchor=None):
+        if self._multiline_check(text):
+            return self.multiline_text(xy, text, fill, font, anchor)
+
         ink, fill = self._getink(fill)
         if font is None:
             font = self.getfont()
@@ -269,13 +286,51 @@ class ImageDraw:
                     mask = font.getmask(text)
             self.draw.draw_bitmap(xy, mask, ink)
 
+    def multiline_text(self, xy, text, fill=None, font=None, anchor=None,
+                       spacing=0, align="left"):
+        widths, heights = [], []
+        max_width = 0
+        lines = self._multiline_split(text)
+        for line in lines:
+            line_width, line_height = self.textsize(line, font)
+            widths.append(line_width)
+            max_width = max(max_width, line_width)
+            heights.append(line_height)
+        left, top = xy
+        for idx, line in enumerate(lines):
+            if align == "left":
+                pass  # left = x
+            elif align == "center":
+                left += (max_width - widths[idx]) / 2.0
+            elif align == "right":
+                left += (max_width - widths[idx])
+            else:
+                assert False, 'align must be "left", "center" or "right"'
+            self.text((left, top), line, fill, font, anchor)
+            top += heights[idx] + spacing
+            left = xy[0]
+
     ##
     # Get the size of a given string, in pixels.
 
     def textsize(self, text, font=None):
+        if self._multiline_check(text):
+            return self.multiline_textsize(text, font)
+
         if font is None:
             font = self.getfont()
         return font.getsize(text)
+
+    def multiline_textsize(self, text, font=None, spacing=0):
+        max_width = 0
+        height = 0
+        lines = self._multiline_split(text)
+        for line in lines:
+            line_width, line_height = self.textsize(line, font)
+            height += line_height + spacing
+            max_width = max(max_width, line_width)
+        return max_width, height
+
 
 ##
 # A simple 2D drawing interface for PIL images.
@@ -296,8 +351,9 @@ def Draw(im, mode=None):
 # experimental access to the outline API
 try:
     Outline = Image.core.outline
-except:
+except AttributeError:
     Outline = None
+
 
 ##
 # (Experimental) A more advanced 2D drawing interface for PIL images,
@@ -313,16 +369,15 @@ def getdraw(im=None, hints=None):
     handler = None
     if not hints or "nicest" in hints:
         try:
-            import _imagingagg
-            handler = _imagingagg
+            from PIL import _imagingagg as handler
         except ImportError:
             pass
     if handler is None:
-        import ImageDraw2
-        handler = ImageDraw2
+        from PIL import ImageDraw2 as handler
     if im:
         im = handler.Draw(im)
     return im, handler
+
 
 ##
 # (experimental) Fills a bounded region with a given color.
@@ -343,10 +398,10 @@ def floodfill(image, xy, value, border=None):
     try:
         background = pixel[x, y]
         if background == value:
-            return # seed point already has fill color
+            return  # seed point already has fill color
         pixel[x, y] = value
     except IndexError:
-        return # seed point outside image
+        return  # seed point outside image
     edge = [(x, y)]
     if border is None:
         while edge:

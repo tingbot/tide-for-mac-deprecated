@@ -39,48 +39,51 @@
 # See the README file for information on usage and redistribution.
 #
 
+from __future__ import print_function
+
 __version__ = "1.3.5"
 
-import Image, ImageFile
-import ImagePalette
+from PIL import Image, ImageFile
+from PIL import ImagePalette
+from PIL import _binary
+from PIL._util import isStringType
 
-import array, string, sys
+import warnings
+import array
+import sys
+import collections
+import itertools
+import os
+import io
 
-II = "II" # little-endian (intel-style)
-MM = "MM" # big-endian (motorola-style)
+# Set these to true to force use of libtiff for reading or writing.
+READ_LIBTIFF = False
+WRITE_LIBTIFF = False
 
-try:
-    if sys.byteorder == "little":
-        native_prefix = II
-    else:
-        native_prefix = MM
-except AttributeError:
-    if ord(array.array("i",[1]).tostring()[0]):
-        native_prefix = II
-    else:
-        native_prefix = MM
+II = b"II"  # little-endian (Intel style)
+MM = b"MM"  # big-endian (Motorola style)
+
+i8 = _binary.i8
+o8 = _binary.o8
+
+if sys.byteorder == "little":
+    native_prefix = II
+else:
+    native_prefix = MM
 
 #
 # --------------------------------------------------------------------
 # Read TIFF files
 
-def il16(c,o=0):
-    return ord(c[o]) + (ord(c[o+1])<<8)
-def il32(c,o=0):
-    return ord(c[o]) + (ord(c[o+1])<<8) + (ord(c[o+2])<<16) + (ord(c[o+3])<<24)
-def ol16(i):
-    return chr(i&255) + chr(i>>8&255)
-def ol32(i):
-    return chr(i&255) + chr(i>>8&255) + chr(i>>16&255) + chr(i>>24&255)
+il16 = _binary.i16le
+il32 = _binary.i32le
+ol16 = _binary.o16le
+ol32 = _binary.o32le
 
-def ib16(c,o=0):
-    return ord(c[o+1]) + (ord(c[o])<<8)
-def ib32(c,o=0):
-    return ord(c[o+3]) + (ord(c[o+2])<<8) + (ord(c[o+1])<<16) + (ord(c[o])<<24)
-def ob16(i):
-    return chr(i>>8&255) + chr(i&255)
-def ob32(i):
-    return chr(i>>24&255) + chr(i>>16&255) + chr(i>>8&255) + chr(i&255)
+ib16 = _binary.i16be
+ib32 = _binary.i32be
+ob16 = _binary.o16be
+ob32 = _binary.o32be
 
 # a few tag names, just to make the code below a bit more readable
 IMAGEWIDTH = 256
@@ -108,11 +111,15 @@ EXTRASAMPLES = 338
 SAMPLEFORMAT = 339
 JPEGTABLES = 347
 COPYRIGHT = 33432
-IPTC_NAA_CHUNK = 33723 # newsphoto properties
-PHOTOSHOP_CHUNK = 34377 # photoshop properties
+IPTC_NAA_CHUNK = 33723  # newsphoto properties
+PHOTOSHOP_CHUNK = 34377  # photoshop properties
 ICCPROFILE = 34675
 EXIFIFD = 34665
 XMP = 700
+
+# https://github.com/fiji/ImageJA/blob/master/src/main/java/ij/io/TiffDecoder.java
+IMAGEJ_META_DATA_BYTE_COUNTS = 50838
+IMAGEJ_META_DATA = 50839
 
 COMPRESSION_INFO = {
     # Compression => pil compression name
@@ -121,11 +128,18 @@ COMPRESSION_INFO = {
     3: "group3",
     4: "group4",
     5: "tiff_lzw",
-    6: "tiff_jpeg", # obsolete
+    6: "tiff_jpeg",  # obsolete
     7: "jpeg",
-    32771: "tiff_raw_16", # 16-bit padding
-    32773: "packbits"
+    8: "tiff_adobe_deflate",
+    32771: "tiff_raw_16",  # 16-bit padding
+    32773: "packbits",
+    32809: "tiff_thunderscan",
+    32946: "tiff_deflate",
+    34676: "tiff_sgilog",
+    34677: "tiff_sgilog24",
 }
+
+COMPRESSION_INFO_REV = dict([(v, k) for (k, v) in COMPRESSION_INFO.items()])
 
 OPEN_INFO = {
     # (ByteOrder, PhotoInterpretation, SampleFormat, FillOrder, BitsPerSample,
@@ -134,21 +148,26 @@ OPEN_INFO = {
     (II, 0, 1, 2, (1,), ()): ("1", "1;IR"),
     (II, 0, 1, 1, (8,), ()): ("L", "L;I"),
     (II, 0, 1, 2, (8,), ()): ("L", "L;IR"),
+    (II, 0, 3, 1, (32,), ()): ("F", "F;32F"),
     (II, 1, 1, 1, (1,), ()): ("1", "1"),
+    (II, 1, 1, 1, (4,), ()): ("L", "L;4"),
     (II, 1, 1, 2, (1,), ()): ("1", "1;R"),
     (II, 1, 1, 1, (8,), ()): ("L", "L"),
-    (II, 1, 1, 1, (8,8), (2,)): ("LA", "LA"),
+    (II, 1, 1, 1, (8, 8), (2,)): ("LA", "LA"),
     (II, 1, 1, 2, (8,), ()): ("L", "L;R"),
+    (II, 1, 1, 1, (12,), ()): ("I;16", "I;12"),
     (II, 1, 1, 1, (16,), ()): ("I;16", "I;16"),
     (II, 1, 2, 1, (16,), ()): ("I;16S", "I;16S"),
+    (II, 1, 1, 1, (32,), ()): ("I", "I;32N"),
     (II, 1, 2, 1, (32,), ()): ("I", "I;32S"),
     (II, 1, 3, 1, (32,), ()): ("F", "F;32F"),
-    (II, 2, 1, 1, (8,8,8), ()): ("RGB", "RGB"),
-    (II, 2, 1, 2, (8,8,8), ()): ("RGB", "RGB;R"),
-    (II, 2, 1, 1, (8,8,8,8), (0,)): ("RGBX", "RGBX"),
-    (II, 2, 1, 1, (8,8,8,8), (1,)): ("RGBA", "RGBa"),
-    (II, 2, 1, 1, (8,8,8,8), (2,)): ("RGBA", "RGBA"),
-    (II, 2, 1, 1, (8,8,8,8), (999,)): ("RGBA", "RGBA"), # corel draw 10
+    (II, 2, 1, 1, (8, 8, 8), ()): ("RGB", "RGB"),
+    (II, 2, 1, 2, (8, 8, 8), ()): ("RGB", "RGB;R"),
+    (II, 2, 1, 1, (8, 8, 8, 8), ()): ("RGBA", "RGBA"),  # missing ExtraSamples
+    (II, 2, 1, 1, (8, 8, 8, 8), (0,)): ("RGBX", "RGBX"),
+    (II, 2, 1, 1, (8, 8, 8, 8), (1,)): ("RGBA", "RGBa"),
+    (II, 2, 1, 1, (8, 8, 8, 8), (2,)): ("RGBA", "RGBA"),
+    (II, 2, 1, 1, (8, 8, 8, 8), (999,)): ("RGBA", "RGBA"),  # Corel Draw 10
     (II, 3, 1, 1, (1,), ()): ("P", "P;1"),
     (II, 3, 1, 2, (1,), ()): ("P", "P;1R"),
     (II, 3, 1, 1, (2,), ()): ("P", "P;2"),
@@ -156,11 +175,11 @@ OPEN_INFO = {
     (II, 3, 1, 1, (4,), ()): ("P", "P;4"),
     (II, 3, 1, 2, (4,), ()): ("P", "P;4R"),
     (II, 3, 1, 1, (8,), ()): ("P", "P"),
-    (II, 3, 1, 1, (8,8), (2,)): ("PA", "PA"),
+    (II, 3, 1, 1, (8, 8), (2,)): ("PA", "PA"),
     (II, 3, 1, 2, (8,), ()): ("P", "P;R"),
-    (II, 5, 1, 1, (8,8,8,8), ()): ("CMYK", "CMYK"),
-    (II, 6, 1, 1, (8,8,8), ()): ("YCbCr", "YCbCr"),
-    (II, 8, 1, 1, (8,8,8), ()): ("LAB", "LAB"),
+    (II, 5, 1, 1, (8, 8, 8, 8), ()): ("CMYK", "CMYK"),
+    (II, 6, 1, 1, (8, 8, 8), ()): ("YCbCr", "YCbCr"),
+    (II, 8, 1, 1, (8, 8, 8), ()): ("LAB", "LAB"),
 
     (MM, 0, 1, 1, (1,), ()): ("1", "1;I"),
     (MM, 0, 1, 2, (1,), ()): ("1", "1;IR"),
@@ -169,18 +188,18 @@ OPEN_INFO = {
     (MM, 1, 1, 1, (1,), ()): ("1", "1"),
     (MM, 1, 1, 2, (1,), ()): ("1", "1;R"),
     (MM, 1, 1, 1, (8,), ()): ("L", "L"),
-    (MM, 1, 1, 1, (8,8), (2,)): ("LA", "LA"),
+    (MM, 1, 1, 1, (8, 8), (2,)): ("LA", "LA"),
     (MM, 1, 1, 2, (8,), ()): ("L", "L;R"),
     (MM, 1, 1, 1, (16,), ()): ("I;16B", "I;16B"),
     (MM, 1, 2, 1, (16,), ()): ("I;16BS", "I;16BS"),
     (MM, 1, 2, 1, (32,), ()): ("I;32BS", "I;32BS"),
-    (MM, 1, 3, 1, (32,), ()): ("F;32BF", "F;32BF"),
-    (MM, 2, 1, 1, (8,8,8), ()): ("RGB", "RGB"),
-    (MM, 2, 1, 2, (8,8,8), ()): ("RGB", "RGB;R"),
-    (MM, 2, 1, 1, (8,8,8,8), (0,)): ("RGBX", "RGBX"),
-    (MM, 2, 1, 1, (8,8,8,8), (1,)): ("RGBA", "RGBa"),
-    (MM, 2, 1, 1, (8,8,8,8), (2,)): ("RGBA", "RGBA"),
-    (MM, 2, 1, 1, (8,8,8,8), (999,)): ("RGBA", "RGBA"), # corel draw 10
+    (MM, 1, 3, 1, (32,), ()): ("F", "F;32BF"),
+    (MM, 2, 1, 1, (8, 8, 8), ()): ("RGB", "RGB"),
+    (MM, 2, 1, 2, (8, 8, 8), ()): ("RGB", "RGB;R"),
+    (MM, 2, 1, 1, (8, 8, 8, 8), (0,)): ("RGBX", "RGBX"),
+    (MM, 2, 1, 1, (8, 8, 8, 8), (1,)): ("RGBA", "RGBa"),
+    (MM, 2, 1, 1, (8, 8, 8, 8), (2,)): ("RGBA", "RGBA"),
+    (MM, 2, 1, 1, (8, 8, 8, 8), (999,)): ("RGBA", "RGBA"),  # Corel Draw 10
     (MM, 3, 1, 1, (1,), ()): ("P", "P;1"),
     (MM, 3, 1, 2, (1,), ()): ("P", "P;1R"),
     (MM, 3, 1, 1, (2,), ()): ("P", "P;2"),
@@ -188,28 +207,64 @@ OPEN_INFO = {
     (MM, 3, 1, 1, (4,), ()): ("P", "P;4"),
     (MM, 3, 1, 2, (4,), ()): ("P", "P;4R"),
     (MM, 3, 1, 1, (8,), ()): ("P", "P"),
-    (MM, 3, 1, 1, (8,8), (2,)): ("PA", "PA"),
+    (MM, 3, 1, 1, (8, 8), (2,)): ("PA", "PA"),
     (MM, 3, 1, 2, (8,), ()): ("P", "P;R"),
-    (MM, 5, 1, 1, (8,8,8,8), ()): ("CMYK", "CMYK"),
-    (MM, 6, 1, 1, (8,8,8), ()): ("YCbCr", "YCbCr"),
-    (MM, 8, 1, 1, (8,8,8), ()): ("LAB", "LAB"),
+    (MM, 5, 1, 1, (8, 8, 8, 8), ()): ("CMYK", "CMYK"),
+    (MM, 6, 1, 1, (8, 8, 8), ()): ("YCbCr", "YCbCr"),
+    (MM, 8, 1, 1, (8, 8, 8), ()): ("LAB", "LAB"),
 
 }
 
-PREFIXES = ["MM\000\052", "II\052\000", "II\xBC\000"]
+PREFIXES = [b"MM\000\052", b"II\052\000", b"II\xBC\000"]
+
 
 def _accept(prefix):
     return prefix[:4] in PREFIXES
 
+
 ##
 # Wrapper for TIFF IFDs.
 
-class ImageFileDirectory:
+class ImageFileDirectory(collections.MutableMapping):
+    """ This class represents a TIFF tag directory.  To speed things
+        up, we don't decode tags unless they're asked for.
 
-    # represents a TIFF tag directory.  to speed things up,
-    # we don't decode tags unless they're asked for.
+        Exposes a dictionary interface of the tags in the directory
+        ImageFileDirectory[key] = value
+        value = ImageFileDirectory[key]
 
-    def __init__(self, prefix):
+        Also contains a dictionary of tag types as read from the tiff
+        image file, 'ImageFileDirectory.tagtype'
+
+
+        Data Structures:
+        'public'
+        * self.tagtype = {} Key: numerical tiff tag number
+                            Value: integer corresponding to the data type from
+                            `TiffTags.TYPES`
+
+        'internal'
+        * self.tags = {}  Key: numerical tiff tag number
+                          Value: Decoded data, Generally a tuple.
+                            * If set from __setval__ -- always a tuple
+                            * Numeric types -- always a tuple
+                            * String type -- not a tuple, returned as string
+                            * Undefined data -- not a tuple, returned as bytes
+                            * Byte -- not a tuple, returned as byte.
+        * self.tagdata = {} Key: numerical tiff tag number
+                            Value: undecoded byte string from file
+
+
+        Tags will be found in either self.tags or self.tagdata, but
+        not both. The union of the two should contain all the tags
+        from the Tiff image file.  External classes shouldn't
+        reference these unless they're really sure what they're doing.
+        """
+
+    def __init__(self, prefix=II):
+        """
+        :prefix: 'II'|'MM'  tiff endianness
+        """
         self.prefix = prefix[:2]
         if self.prefix == MM:
             self.i16, self.i32 = ib16, ib32
@@ -222,21 +277,33 @@ class ImageFileDirectory:
         self.reset()
 
     def reset(self):
+        #: Tags is an incomplete dictionary of the tags of the image.
+        #: For a complete dictionary, use the as_dict method.
         self.tags = {}
         self.tagdata = {}
-        self.tagtype = {} # added 2008-06-05 by Florian Hoech
+        self.tagtype = {}  # added 2008-06-05 by Florian Hoech
         self.next = None
+        self.offset = None
 
-    # dictionary API (sort of)
+    def __str__(self):
+        return str(self.as_dict())
 
-    def keys(self):
-        return self.tagdata.keys() + self.tags.keys()
+    def as_dict(self):
+        """Return a dictionary of the image's tags."""
+        return dict(self.items())
 
-    def items(self):
-        items = self.tags.items()
-        for tag in self.tagdata.keys():
-            items.append((tag, self[tag]))
-        return items
+    def named(self):
+        """
+        Returns the complete tag dictionary, with named tags where possible.
+        """
+        from PIL import TiffTags
+        result = {}
+        for tag_code, value in self.items():
+            tag_name = TiffTags.TAGS.get(tag_code, tag_code)
+            result[tag_name] = value
+        return result
+
+    # dictionary API
 
     def __len__(self):
         return len(self.tagdata) + len(self.tags)
@@ -245,17 +312,12 @@ class ImageFileDirectory:
         try:
             return self.tags[tag]
         except KeyError:
-            type, data = self.tagdata[tag] # unpack on the fly
+            data = self.tagdata[tag]  # unpack on the fly
+            type = self.tagtype[tag]
             size, handler = self.load_dispatch[type]
             self.tags[tag] = data = handler(self, data)
             del self.tagdata[tag]
             return data
-
-    def get(self, tag, default=None):
-        try:
-            return self[tag]
-        except KeyError:
-            return default
 
     def getscalar(self, tag, default=None):
         try:
@@ -264,37 +326,52 @@ class ImageFileDirectory:
                 if tag == SAMPLEFORMAT:
                     # work around broken (?) matrox library
                     # (from Ted Wright, via Bob Klimek)
-                    raise KeyError # use default
-                raise ValueError, "not a scalar"
+                    raise KeyError  # use default
+                raise ValueError("not a scalar")
             return value[0]
         except KeyError:
             if default is None:
                 raise
             return default
 
-    def has_key(self, tag):
-        return self.tags.has_key(tag) or self.tagdata.has_key(tag)
+    def __contains__(self, tag):
+        return tag in self.tags or tag in self.tagdata
+
+    if bytes is str:
+        def has_key(self, tag):
+            return tag in self
 
     def __setitem__(self, tag, value):
-        if type(value) is not type(()):
+        # tags are tuples for integers
+        # tags are not tuples for byte, string, and undefined data.
+        # see load_*
+        if not isinstance(value, tuple):
             value = (value,)
         self.tags[tag] = value
+
+    def __delitem__(self, tag):
+        self.tags.pop(tag, self.tagdata.pop(tag, None))
+
+    def __iter__(self):
+        return itertools.chain(self.tags.__iter__(), self.tagdata.__iter__())
+
+    def items(self):
+        keys = list(self.__iter__())
+        values = [self[key] for key in keys]
+        return zip(keys, values)
 
     # load primitives
 
     load_dispatch = {}
 
     def load_byte(self, data):
-        l = []
-        for i in range(len(data)):
-            l.append(ord(data[i]))
-        return tuple(l)
+        return data
     load_dispatch[1] = (1, load_byte)
 
     def load_string(self, data):
-        if data[-1:] == '\0':
+        if data[-1:] == b'\0':
             data = data[:-1]
-        return data
+        return data.decode('latin-1', 'replace')
     load_dispatch[2] = (1, load_string)
 
     def load_short(self, data):
@@ -341,6 +418,7 @@ class ImageFileDirectory:
         # load tag dictionary
 
         self.reset()
+        self.offset = fp.tell()
 
         i16 = self.i16
         i32 = self.i32
@@ -348,22 +426,27 @@ class ImageFileDirectory:
         for i in range(i16(fp.read(2))):
 
             ifd = fp.read(12)
+            if len(ifd) != 12:
+                warnings.warn("Possibly corrupt EXIF data.  "
+                              "Expecting to read 12 bytes but only got %d."
+                              % (len(ifd)))
+                continue
 
             tag, typ = i16(ifd), i16(ifd, 2)
 
             if Image.DEBUG:
-                import TiffTags
+                from PIL import TiffTags
                 tagname = TiffTags.TAGS.get(tag, "unknown")
                 typname = TiffTags.TYPES.get(typ, "unknown")
-                print "tag: %s (%d)" % (tagname, tag),
-                print "- type: %s (%d)" % (typname, typ),
+                print("tag: %s (%d)" % (tagname, tag), end=' ')
+                print("- type: %s (%d)" % (typname, typ), end=' ')
 
             try:
                 dispatch = self.load_dispatch[typ]
             except KeyError:
                 if Image.DEBUG:
-                    print "- unsupported type", typ
-                continue # ignore unsupported type
+                    print("- unsupported type", typ)
+                continue  # ignore unsupported type
 
             size, handler = dispatch
 
@@ -372,25 +455,40 @@ class ImageFileDirectory:
             # Get and expand tag value
             if size > 4:
                 here = fp.tell()
+                if Image.DEBUG:
+                    print("Tag Location: %s" % here)
                 fp.seek(i32(ifd, 8))
+                if Image.DEBUG:
+                    print("Data Location: %s" % fp.tell())
                 data = ImageFile._safe_read(fp, size)
                 fp.seek(here)
             else:
                 data = ifd[8:8+size]
 
             if len(data) != size:
-                raise IOError, "not enough data"
+                warnings.warn("Possibly corrupt EXIF data.  "
+                              "Expecting to read %d bytes but only got %d. "
+                              "Skipping tag %s" % (size, len(data), tag))
+                continue
 
-            self.tagdata[tag] = typ, data
+            self.tagdata[tag] = data
             self.tagtype[tag] = typ
 
             if Image.DEBUG:
-                if tag in (COLORMAP, IPTC_NAA_CHUNK, PHOTOSHOP_CHUNK, ICCPROFILE, XMP):
-                    print "- value: <table: %d bytes>" % size
+                if tag in (COLORMAP, IPTC_NAA_CHUNK, PHOTOSHOP_CHUNK,
+                           ICCPROFILE, XMP):
+                    print("- value: <table: %d bytes>" % size)
                 else:
-                    print "- value:", self[tag]
+                    print("- value:", self[tag])
 
-        self.next = i32(fp.read(4))
+        ifd = fp.read(4)
+        if len(ifd) != 4:
+            warnings.warn("Possibly corrupt EXIF data.  "
+                          "Expecting to read 4 bytes but only got %d."
+                          % (len(ifd)))
+            return
+
+        self.next = i32(ifd)
 
     # save primitives
 
@@ -402,8 +500,7 @@ class ImageFileDirectory:
         fp.write(o16(len(self.tags)))
 
         # always write in ascending tag order
-        tags = self.tags.items()
-        tags.sort()
+        tags = sorted(self.tags.items())
 
         directory = []
         append = directory.append
@@ -417,62 +514,90 @@ class ImageFileDirectory:
 
             typ = None
 
-            if self.tagtype.has_key(tag):
+            if tag in self.tagtype:
                 typ = self.tagtype[tag]
+
+            if Image.DEBUG:
+                print("Tag %s, Type: %s, Value: %s" % (tag, typ, value))
 
             if typ == 1:
                 # byte data
-                data = value = string.join(map(chr, value), "")
+                if isinstance(value, tuple):
+                    data = value = value[-1]
+                else:
+                    data = value
             elif typ == 7:
                 # untyped data
-                data = value = string.join(value, "")
-            elif type(value[0]) is type(""):
+                data = value = b"".join(value)
+            elif typ in (11, 12):
+                # float value
+                tmap = {11: 'f', 12: 'd'}
+                if not isinstance(value, tuple):
+                    value = (value,)
+                a = array.array(tmap[typ], value)
+                if self.prefix != native_prefix:
+                    a.byteswap()
+                data = a.tostring()
+            elif isStringType(value[0]):
                 # string data
+                if isinstance(value, tuple):
+                    value = value[-1]
                 typ = 2
-                data = value = string.join(value, "\0") + "\0"
+                # was b'\0'.join(str), which led to \x00a\x00b sorts
+                # of strings which I don't see in in the wild tiffs
+                # and doesn't match the tiff spec: 8-bit byte that
+                # contains a 7-bit ASCII code; the last byte must be
+                # NUL (binary zero). Also, I don't think this was well
+                # exercised before.
+                data = value = b"" + value.encode('ascii', 'replace') + b"\0"
             else:
                 # integer data
                 if tag == STRIPOFFSETS:
                     stripoffsets = len(directory)
-                    typ = 4 # to avoid catch-22
-                elif tag in (X_RESOLUTION, Y_RESOLUTION):
+                    typ = 4  # to avoid catch-22
+                elif tag in (X_RESOLUTION, Y_RESOLUTION) or typ == 5:
                     # identify rational data fields
                     typ = 5
+                    if isinstance(value[0], tuple):
+                        # long name for flatten
+                        value = tuple(itertools.chain.from_iterable(value))
                 elif not typ:
                     typ = 3
                     for v in value:
                         if v >= 65536:
                             typ = 4
                 if typ == 3:
-                    data = string.join(map(o16, value), "")
+                    data = b"".join(map(o16, value))
                 else:
-                    data = string.join(map(o32, value), "")
+                    data = b"".join(map(o32, value))
 
             if Image.DEBUG:
-                import TiffTags
+                from PIL import TiffTags
                 tagname = TiffTags.TAGS.get(tag, "unknown")
                 typname = TiffTags.TYPES.get(typ, "unknown")
-                print "save: %s (%d)" % (tagname, tag),
-                print "- type: %s (%d)" % (typname, typ),
-                if tag in (COLORMAP, IPTC_NAA_CHUNK, PHOTOSHOP_CHUNK, ICCPROFILE, XMP):
+                print("save: %s (%d)" % (tagname, tag), end=' ')
+                print("- type: %s (%d)" % (typname, typ), end=' ')
+                if tag in (COLORMAP, IPTC_NAA_CHUNK, PHOTOSHOP_CHUNK,
+                           ICCPROFILE, XMP):
                     size = len(data)
-                    print "- value: <table: %d bytes>" % size
+                    print("- value: <table: %d bytes>" % size)
                 else:
-                    print "- value:", value
+                    print("- value:", value)
 
             # figure out if data fits into the directory
             if len(data) == 4:
-                append((tag, typ, len(value), data, ""))
+                append((tag, typ, len(value), data, b""))
             elif len(data) < 4:
-                append((tag, typ, len(value), data + (4-len(data))*"\0", ""))
+                append((tag, typ, len(value), data + (4-len(data))*b"\0", b""))
             else:
                 count = len(value)
                 if typ == 5:
-                    count = count / 2        # adjust for rational data field
+                    count = count // 2        # adjust for rational data field
+
                 append((tag, typ, count, o32(offset), data))
-                offset = offset + len(data)
+                offset += len(data)
                 if offset & 1:
-                    offset = offset + 1 # word padding
+                    offset += 1  # word padding
 
         # update strip offset data to point beyond auxiliary data
         if stripoffsets is not None:
@@ -484,19 +609,20 @@ class ImageFileDirectory:
         # pass 2: write directory to file
         for tag, typ, count, value, data in directory:
             if Image.DEBUG > 1:
-                print tag, typ, count, repr(value), repr(data)
+                print(tag, typ, count, repr(value), repr(data))
             fp.write(o16(tag) + o16(typ) + o32(count) + value)
 
         # -- overwrite here for multi-page --
-        fp.write("\0\0\0\0") # end of directory
+        fp.write(b"\0\0\0\0")  # end of directory
 
         # pass 3: write auxiliary data to file
         for tag, typ, count, value, data in directory:
             fp.write(data)
             if len(data) & 1:
-                fp.write("\0")
+                fp.write(b"\0")
 
         return offset
+
 
 ##
 # Image plugin for TIFF files.
@@ -513,7 +639,7 @@ class TiffImageFile(ImageFile.ImageFile):
         ifh = self.fp.read(8)
 
         if ifh[:4] not in PREFIXES:
-            raise SyntaxError, "not a TIFF file"
+            raise SyntaxError("not a TIFF file")
 
         # image file directory (tag dictionary)
         self.tag = self.ifd = ImageFileDirectory(ifh[:2])
@@ -522,43 +648,81 @@ class TiffImageFile(ImageFile.ImageFile):
         self.__first = self.__next = self.ifd.i32(ifh, 4)
         self.__frame = -1
         self.__fp = self.fp
+        self._frame_pos = []
+        self._n_frames = None
+        self._is_animated = None
+
+        if Image.DEBUG:
+            print("*** TiffImageFile._open ***")
+            print("- __first:", self.__first)
+            print("- ifh: ", ifh)
 
         # and load the first frame
         self._seek(0)
 
+    @property
+    def n_frames(self):
+        if self._n_frames is None:
+            current = self.tell()
+            try:
+                while True:
+                    self._seek(self.tell() + 1)
+            except EOFError:
+                self._n_frames = self.tell() + 1
+            self.seek(current)
+        return self._n_frames
+
+    @property
+    def is_animated(self):
+        if self._is_animated is None:
+            current = self.tell()
+
+            try:
+                self.seek(1)
+                self._is_animated = True
+            except EOFError:
+                self._is_animated = False
+
+            self.seek(current)
+        return self._is_animated
+
     def seek(self, frame):
         "Select a given frame as current image"
+        self._seek(max(frame, 0))  # Questionable backwards compatibility.
+        # Create a new core image object on second and
+        # subsequent frames in the image. Image may be
+        # different size/mode.
+        Image._decompression_bomb_check(self.size)
+        self.im = Image.core.new(self.mode, self.size)
 
-        if frame < 0:
-            frame = 0
-        self._seek(frame)
+    def _seek(self, frame):
+        self.fp = self.__fp
+        while len(self._frame_pos) <= frame:
+            if not self.__next:
+                raise EOFError("no more images in TIFF file")
+            if Image.DEBUG:
+                print("Seeking to frame %s, on frame %s, __next %s, location: %s" %
+                      (frame, self.__frame, self.__next, self.fp.tell()))
+            # reset python3 buffered io handle in case fp
+            # was passed to libtiff, invalidating the buffer
+            self.fp.tell()
+            self.fp.seek(self.__next)
+            self._frame_pos.append(self.__next)
+            if Image.DEBUG:
+                print("Loading tags, location: %s" % self.fp.tell())
+            self.tag.load(self.fp)
+            self.__next = self.tag.next
+            self.__frame += 1
+        self.fp.seek(self._frame_pos[frame])
+        self.tag.load(self.fp)
+        self.__frame = frame
+        self._setup()
 
     def tell(self):
         "Return the current frame number"
-
-        return self._tell()
-
-    def _seek(self, frame):
-
-        self.fp = self.__fp
-        if frame < self.__frame:
-            # rewind file
-            self.__frame = -1
-            self.__next = self.__first
-        while self.__frame < frame:
-            if not self.__next:
-                raise EOFError, "no more images in TIFF file"
-            self.fp.seek(self.__next)
-            self.tag.load(self.fp)
-            self.__next = self.tag.next
-            self.__frame = self.__frame + 1
-        self._setup()
-
-    def _tell(self):
-
         return self.__frame
 
-    def _decoder(self, rawmode, layer):
+    def _decoder(self, rawmode, layer, tile=None):
         "Setup decoder contexts"
 
         args = None
@@ -569,27 +733,96 @@ class TiffImageFile(ImageFile.ImageFile):
             args = (rawmode, 0, 1)
         elif compression == "jpeg":
             args = rawmode, ""
-            if self.tag.has_key(JPEGTABLES):
+            if JPEGTABLES in self.tag:
                 # Hack to handle abbreviated JPEG headers
                 self.tile_prefix = self.tag[JPEGTABLES]
         elif compression == "packbits":
             args = rawmode
         elif compression == "tiff_lzw":
             args = rawmode
-            if self.tag.has_key(317):
+            if 317 in self.tag:
                 # Section 14: Differencing Predictor
                 self.decoderconfig = (self.tag[PREDICTOR][0],)
 
-        if self.tag.has_key(ICCPROFILE):
+        if ICCPROFILE in self.tag:
             self.info['icc_profile'] = self.tag[ICCPROFILE]
 
         return args
 
+    def _load_libtiff(self):
+        """ Overload method triggered when we detect a compressed tiff
+            Calls out to libtiff """
+
+        pixel = Image.Image.load(self)
+
+        if self.tile is None:
+            raise IOError("cannot load this image")
+        if not self.tile:
+            return pixel
+
+        self.load_prepare()
+
+        if not len(self.tile) == 1:
+            raise IOError("Not exactly one tile")
+
+        # (self._compression, (extents tuple),
+        #   0, (rawmode, self._compression, fp))
+        extents = self.tile[0][1]
+        args = self.tile[0][3] + (self.ifd.offset,)
+        decoder = Image._getdecoder(self.mode, 'libtiff', args,
+                                    self.decoderconfig)
+        try:
+            decoder.setimage(self.im, extents)
+        except ValueError:
+            raise IOError("Couldn't set the image")
+
+        if hasattr(self.fp, "getvalue"):
+            # We've got a stringio like thing passed in. Yay for all in memory.
+            # The decoder needs the entire file in one shot, so there's not
+            # a lot we can do here other than give it the entire file.
+            # unless we could do something like get the address of the
+            # underlying string for stringio.
+            #
+            # Rearranging for supporting byteio items, since they have a fileno
+            # that returns an IOError if there's no underlying fp. Easier to
+            # deal with here by reordering.
+            if Image.DEBUG:
+                print("have getvalue. just sending in a string from getvalue")
+            n, err = decoder.decode(self.fp.getvalue())
+        elif hasattr(self.fp, "fileno"):
+            # we've got a actual file on disk, pass in the fp.
+            if Image.DEBUG:
+                print("have fileno, calling fileno version of the decoder.")
+            self.fp.seek(0)
+            # 4 bytes, otherwise the trace might error out
+            n, err = decoder.decode(b"fpfp")
+        else:
+            # we have something else.
+            if Image.DEBUG:
+                print("don't have fileno or getvalue. just reading")
+            # UNDONE -- so much for that buffer size thing.
+            n, err = decoder.decode(self.fp.read())
+
+        self.tile = []
+        self.readonly = 0
+        # libtiff closed the fp in a, we need to close self.fp, if possible
+        if hasattr(self.fp, 'close'):
+            if not self.__next:
+                self.fp.close()
+        self.fp = None  # might be shared
+
+        if err < 0:
+            raise IOError(err)
+
+        self.load_end()
+
+        return Image.Image.load(self)
+
     def _setup(self):
         "Setup this image object based on current tags"
 
-        if self.tag.has_key(0xBC01):
-            raise IOError, "Windows Media Photo files not yet supported"
+        if 0xBC01 in self.tag:
+            raise IOError("Windows Media Photo files not yet supported")
 
         getscalar = self.tag.getscalar
 
@@ -604,11 +837,11 @@ class TiffImageFile(ImageFile.ImageFile):
         fillorder = getscalar(FILLORDER, 1)
 
         if Image.DEBUG:
-            print "*** Summary ***"
-            print "- compression:", self._compression
-            print "- photometric_interpretation:", photo
-            print "- planar_configuration:", self._planar_configuration
-            print "- fill_order:", fillorder
+            print("*** Summary ***")
+            print("- compression:", self._compression)
+            print("- photometric_interpretation:", photo)
+            print("- planar_configuration:", self._planar_configuration)
+            print("- fill_order:", fillorder)
 
         # size
         xsize = getscalar(IMAGEWIDTH)
@@ -616,7 +849,7 @@ class TiffImageFile(ImageFile.ImageFile):
         self.size = xsize, ysize
 
         if Image.DEBUG:
-            print "- size:", self.size
+            print("- size:", self.size)
 
         format = getscalar(SAMPLEFORMAT, 1)
 
@@ -627,55 +860,132 @@ class TiffImageFile(ImageFile.ImageFile):
             self.tag.get(EXTRASAMPLES, ())
             )
         if Image.DEBUG:
-            print "format key:", key
+            print("format key:", key)
         try:
             self.mode, rawmode = OPEN_INFO[key]
         except KeyError:
             if Image.DEBUG:
-                print "- unsupported format"
-            raise SyntaxError, "unknown pixel mode"
+                print("- unsupported format")
+            raise SyntaxError("unknown pixel mode")
 
         if Image.DEBUG:
-            print "- raw mode:", rawmode
-            print "- pil mode:", self.mode
+            print("- raw mode:", rawmode)
+            print("- pil mode:", self.mode)
 
         self.info["compression"] = self._compression
 
         xres = getscalar(X_RESOLUTION, (1, 1))
         yres = getscalar(Y_RESOLUTION, (1, 1))
 
+        if xres and not isinstance(xres, tuple):
+            xres = (xres, 1.)
+        if yres and not isinstance(yres, tuple):
+            yres = (yres, 1.)
         if xres and yres:
             xres = xres[0] / (xres[1] or 1)
             yres = yres[0] / (yres[1] or 1)
             resunit = getscalar(RESOLUTION_UNIT, 1)
-            if resunit == 2: # dots per inch
+            if resunit == 2:  # dots per inch
                 self.info["dpi"] = xres, yres
-            elif resunit == 3: # dots per centimeter. convert to dpi
+            elif resunit == 3:  # dots per centimeter. convert to dpi
                 self.info["dpi"] = xres * 2.54, yres * 2.54
-            else: # No absolute unit of measurement
+            else:  # No absolute unit of measurement
                 self.info["resolution"] = xres, yres
 
         # build tile descriptors
         x = y = l = 0
         self.tile = []
-        if self.tag.has_key(STRIPOFFSETS):
+        if STRIPOFFSETS in self.tag:
             # striped image
+            offsets = self.tag[STRIPOFFSETS]
             h = getscalar(ROWSPERSTRIP, ysize)
             w = self.size[0]
-            a = None
-            for o in self.tag[STRIPOFFSETS]:
-                if not a:
-                    a = self._decoder(rawmode, l)
+            if READ_LIBTIFF or self._compression in ["tiff_ccitt", "group3",
+                                                     "group4", "tiff_jpeg",
+                                                     "tiff_adobe_deflate",
+                                                     "tiff_thunderscan",
+                                                     "tiff_deflate",
+                                                     "tiff_sgilog",
+                                                     "tiff_sgilog24",
+                                                     "tiff_raw_16"]:
+                # if Image.DEBUG:
+                #     print "Activating g4 compression for whole file"
+
+                # Decoder expects entire file as one tile.
+                # There's a buffer size limit in load (64k)
+                # so large g4 images will fail if we use that
+                # function.
+                #
+                # Setup the one tile for the whole image, then
+                # replace the existing load function with our
+                # _load_libtiff function.
+
+                self.load = self._load_libtiff
+
+                # To be nice on memory footprint, if there's a
+                # file descriptor, use that instead of reading
+                # into a string in python.
+
+                # libtiff closes the file descriptor, so pass in a dup.
+                try:
+                    fp = hasattr(self.fp, "fileno") and \
+                        os.dup(self.fp.fileno())
+                    # flush the file descriptor, prevents error on pypy 2.4+
+                    # should also eliminate the need for fp.tell for py3
+                    # in _seek
+                    self.fp.flush()
+                except IOError:
+                    # io.BytesIO have a fileno, but returns an IOError if
+                    # it doesn't use a file descriptor.
+                    fp = False
+
+                # libtiff handles the fillmode for us, so 1;IR should
+                # actually be 1;I. Including the R double reverses the
+                # bits, so stripes of the image are reversed.  See
+                # https://github.com/python-pillow/Pillow/issues/279
+                if fillorder == 2:
+                    key = (
+                        self.tag.prefix, photo, format, 1,
+                        self.tag.get(BITSPERSAMPLE, (1,)),
+                        self.tag.get(EXTRASAMPLES, ())
+                        )
+                    if Image.DEBUG:
+                        print("format key:", key)
+                    # this should always work, since all the
+                    # fillorder==2 modes have a corresponding
+                    # fillorder=1 mode
+                    self.mode, rawmode = OPEN_INFO[key]
+                # libtiff always returns the bytes in native order.
+                # we're expecting image byte order. So, if the rawmode
+                # contains I;16, we need to convert from native to image
+                # byte order.
+                if self.mode in ('I;16B', 'I;16') and 'I;16' in rawmode:
+                    rawmode = 'I;16N'
+
+                # Offset in the tile tuple is 0, we go from 0,0 to
+                # w,h, and we only do this once -- eds
+                a = (rawmode, self._compression, fp)
                 self.tile.append(
                     (self._compression,
-                    (0, min(y, ysize), w, min(y+h, ysize)),
-                    o, a))
-                y = y + h
-                if y >= self.size[1]:
-                    x = y = 0
-                    l = l + 1
+                     (0, 0, w, ysize),
+                     0, a))
+                a = None
+
+            else:
+                for i in range(len(offsets)):
+                    a = self._decoder(rawmode, l, i)
+                    self.tile.append(
+                        (self._compression,
+                            (0, min(y, ysize), w, min(y+h, ysize)),
+                            offsets[i], a))
+                    if Image.DEBUG:
+                        print("tiles: ", self.tile)
+                    y = y + h
+                    if y >= self.size[1]:
+                        x = y = 0
+                        l += 1
                     a = None
-        elif self.tag.has_key(TILEOFFSETS):
+        elif TILEOFFSETS in self.tag:
             # tiled image
             w = getscalar(322)
             h = getscalar(323)
@@ -687,48 +997,50 @@ class TiffImageFile(ImageFile.ImageFile):
                 # is not a multiple of the tile size...
                 self.tile.append(
                     (self._compression,
-                    (x, y, x+w, y+h),
-                    o, a))
+                        (x, y, x+w, y+h),
+                        o, a))
                 x = x + w
                 if x >= self.size[0]:
                     x, y = 0, y + h
                     if y >= self.size[1]:
                         x = y = 0
-                        l = l + 1
+                        l += 1
                         a = None
         else:
             if Image.DEBUG:
-                print "- unsupported data organization"
+                print("- unsupported data organization")
             raise SyntaxError("unknown data organization")
 
         # fixup palette descriptor
 
         if self.mode == "P":
-            palette = map(lambda a: chr(a / 256), self.tag[COLORMAP])
-            self.palette = ImagePalette.raw("RGB;L", string.join(palette, ""))
+            palette = [o8(b // 256) for b in self.tag[COLORMAP]]
+            self.palette = ImagePalette.raw("RGB;L", b"".join(palette))
 #
 # --------------------------------------------------------------------
 # Write TIFF files
 
-# little endian is default except for image modes with explict big endian byte-order
+# little endian is default except for image modes with
+# explicit big endian byte-order
 
 SAVE_INFO = {
-    # mode => rawmode, byteorder, photometrics, sampleformat, bitspersample, extra
+    # mode => rawmode, byteorder, photometrics,
+    #           sampleformat, bitspersample, extra
     "1": ("1", II, 1, 1, (1,), None),
     "L": ("L", II, 1, 1, (8,), None),
-    "LA": ("LA", II, 1, 1, (8,8), 2),
+    "LA": ("LA", II, 1, 1, (8, 8), 2),
     "P": ("P", II, 3, 1, (8,), None),
-    "PA": ("PA", II, 3, 1, (8,8), 2),
+    "PA": ("PA", II, 3, 1, (8, 8), 2),
     "I": ("I;32S", II, 1, 2, (32,), None),
     "I;16": ("I;16", II, 1, 1, (16,), None),
     "I;16S": ("I;16S", II, 1, 2, (16,), None),
     "F": ("F;32F", II, 1, 3, (32,), None),
-    "RGB": ("RGB", II, 2, 1, (8,8,8), None),
-    "RGBX": ("RGBX", II, 2, 1, (8,8,8,8), 0),
-    "RGBA": ("RGBA", II, 2, 1, (8,8,8,8), 2),
-    "CMYK": ("CMYK", II, 5, 1, (8,8,8,8), None),
-    "YCbCr": ("YCbCr", II, 6, 1, (8,8,8), None),
-    "LAB": ("LAB", II, 8, 1, (8,8,8), None),
+    "RGB": ("RGB", II, 2, 1, (8, 8, 8), None),
+    "RGBX": ("RGBX", II, 2, 1, (8, 8, 8, 8), 0),
+    "RGBA": ("RGBA", II, 2, 1, (8, 8, 8, 8), 2),
+    "CMYK": ("CMYK", II, 5, 1, (8, 8, 8, 8), None),
+    "YCbCr": ("YCbCr", II, 6, 1, (8, 8, 8), None),
+    "LAB": ("LAB", II, 8, 1, (8, 8, 8), None),
 
     "I;32BS": ("I;32BS", MM, 1, 2, (32,), None),
     "I;16B": ("I;16B", MM, 1, 1, (16,), None),
@@ -736,27 +1048,37 @@ SAVE_INFO = {
     "F;32BF": ("F;32BF", MM, 1, 3, (32,), None),
 }
 
+
 def _cvt_res(value):
     # convert value to TIFF rational number -- (numerator, denominator)
-    if type(value) in (type([]), type(())):
+    if isinstance(value, collections.Sequence):
         assert(len(value) % 2 == 0)
         return value
-    if type(value) == type(1):
+    if isinstance(value, int):
         return (value, 1)
     value = float(value)
     return (int(value * 65536), 65536)
+
 
 def _save(im, fp, filename):
 
     try:
         rawmode, prefix, photo, format, bits, extra = SAVE_INFO[im.mode]
     except KeyError:
-        raise IOError, "cannot write mode %s as TIFF" % im.mode
+        raise IOError("cannot write mode %s as TIFF" % im.mode)
 
     ifd = ImageFileDirectory(prefix)
 
+    compression = im.encoderinfo.get('compression', im.info.get('compression',
+                                     'raw'))
+
+    libtiff = WRITE_LIBTIFF or compression != 'raw'
+
+    # required for color libtiff images
+    ifd[PLANAR_CONFIGURATION] = getattr(im, '_planar_configuration', 1)
+
     # -- multi-page -- skip TIFF header on subsequent pages
-    if fp.tell() == 0:
+    if not libtiff and fp.tell() == 0:
         # tiff header (write via IFD to get everything right)
         # PIL always starts the first IFD at offset 8
         fp.write(ifd.prefix + ifd.o16(42) + ifd.o32(8))
@@ -764,48 +1086,52 @@ def _save(im, fp, filename):
     ifd[IMAGEWIDTH] = im.size[0]
     ifd[IMAGELENGTH] = im.size[1]
 
+    # write any arbitrary tags passed in as an ImageFileDirectory
+    info = im.encoderinfo.get("tiffinfo", {})
+    if Image.DEBUG:
+        print("Tiffinfo Keys: %s" % info.keys)
+    keys = list(info.keys())
+    for key in keys:
+        ifd[key] = info.get(key)
+        try:
+            ifd.tagtype[key] = info.tagtype[key]
+        except:
+            pass  # might not be an IFD, Might not have populated type
+
     # additions written by Greg Couch, gregc@cgl.ucsf.edu
     # inspired by image-sig posting from Kevin Cazabon, kcazabon@home.com
     if hasattr(im, 'tag'):
         # preserve tags from original TIFF image file
-        for key in (RESOLUTION_UNIT, X_RESOLUTION, Y_RESOLUTION):
-            if im.tag.tagdata.has_key(key):
-                ifd[key] = im.tag.tagdata.get(key)
-        # preserve some more tags from original TIFF image file
-        # -- 2008-06-06 Florian Hoech
-        ifd.tagtype = im.tag.tagtype
-        for key in (IPTC_NAA_CHUNK, PHOTOSHOP_CHUNK, XMP):
-            if im.tag.has_key(key):
+        for key in (RESOLUTION_UNIT, X_RESOLUTION, Y_RESOLUTION,
+                    IPTC_NAA_CHUNK, PHOTOSHOP_CHUNK, XMP):
+            if key in im.tag:
                 ifd[key] = im.tag[key]
+            ifd.tagtype[key] = im.tag.tagtype.get(key, None)
+
         # preserve ICC profile (should also work when saving other formats
         # which support profiles as TIFF) -- 2008-06-06 Florian Hoech
-        if im.info.has_key("icc_profile"):
+        if "icc_profile" in im.info:
             ifd[ICCPROFILE] = im.info["icc_profile"]
-    if im.encoderinfo.has_key("description"):
-        ifd[IMAGEDESCRIPTION] = im.encoderinfo["description"]
-    if im.encoderinfo.has_key("resolution"):
-        ifd[X_RESOLUTION] = ifd[Y_RESOLUTION] \
-                                = _cvt_res(im.encoderinfo["resolution"])
-    if im.encoderinfo.has_key("x resolution"):
-        ifd[X_RESOLUTION] = _cvt_res(im.encoderinfo["x resolution"])
-    if im.encoderinfo.has_key("y resolution"):
-        ifd[Y_RESOLUTION] = _cvt_res(im.encoderinfo["y resolution"])
-    if im.encoderinfo.has_key("resolution unit"):
-        unit = im.encoderinfo["resolution unit"]
-        if unit == "inch":
-            ifd[RESOLUTION_UNIT] = 2
-        elif unit == "cm" or unit == "centimeter":
-            ifd[RESOLUTION_UNIT] = 3
-        else:
-            ifd[RESOLUTION_UNIT] = 1
-    if im.encoderinfo.has_key("software"):
-        ifd[SOFTWARE] = im.encoderinfo["software"]
-    if im.encoderinfo.has_key("date time"):
-        ifd[DATE_TIME] = im.encoderinfo["date time"]
-    if im.encoderinfo.has_key("artist"):
-        ifd[ARTIST] = im.encoderinfo["artist"]
-    if im.encoderinfo.has_key("copyright"):
-        ifd[COPYRIGHT] = im.encoderinfo["copyright"]
+
+    for key, name, cvt in [
+            (IMAGEDESCRIPTION, "description", lambda x: x),
+            (X_RESOLUTION, "resolution", _cvt_res),
+            (Y_RESOLUTION, "resolution", _cvt_res),
+            (X_RESOLUTION, "x_resolution", _cvt_res),
+            (Y_RESOLUTION, "y_resolution", _cvt_res),
+            (RESOLUTION_UNIT, "resolution_unit",
+             lambda x: {"inch": 2, "cm": 3, "centimeter": 3}.get(x, 1)),
+            (SOFTWARE, "software", lambda x: x),
+            (DATE_TIME, "date_time", lambda x: x),
+            (ARTIST, "artist", lambda x: x),
+            (COPYRIGHT, "copyright", lambda x: x)]:
+        name_with_spaces = name.replace("_", " ")
+        if "_" in name and name_with_spaces in im.encoderinfo:
+            warnings.warn("%r is deprecated; use %r instead" %
+                          (name_with_spaces, name), DeprecationWarning)
+            ifd[key] = cvt(im.encoderinfo[name.replace("_", " ")])
+        if name in im.encoderinfo:
+            ifd[key] = cvt(im.encoderinfo[name])
 
     dpi = im.encoderinfo.get("dpi")
     if dpi:
@@ -826,25 +1152,109 @@ def _save(im, fp, filename):
 
     if im.mode == "P":
         lut = im.im.getpalette("RGB", "RGB;L")
-        ifd[COLORMAP] = tuple(map(lambda v: ord(v) * 256, lut))
+        ifd[COLORMAP] = tuple(i8(v) * 256 for v in lut)
 
     # data orientation
-    stride = len(bits) * ((im.size[0]*bits[0]+7)/8)
+    stride = len(bits) * ((im.size[0]*bits[0]+7)//8)
     ifd[ROWSPERSTRIP] = im.size[1]
     ifd[STRIPBYTECOUNTS] = stride * im.size[1]
-    ifd[STRIPOFFSETS] = 0 # this is adjusted by IFD writer
-    ifd[COMPRESSION] = 1 # no compression
+    ifd[STRIPOFFSETS] = 0  # this is adjusted by IFD writer
+    # no compression by default:
+    ifd[COMPRESSION] = COMPRESSION_INFO_REV.get(compression, 1)
 
-    offset = ifd.save(fp)
+    if libtiff:
+        if Image.DEBUG:
+            print("Saving using libtiff encoder")
+            print(ifd.items())
+        _fp = 0
+        if hasattr(fp, "fileno"):
+            try:
+                fp.seek(0)
+                _fp = os.dup(fp.fileno())
+            except io.UnsupportedOperation:
+                pass
 
-    ImageFile._save(im, fp, [
-        ("raw", (0,0)+im.size, offset, (rawmode, stride, 1))
-        ])
+        # ICC Profile crashes.
+        blocklist = [STRIPOFFSETS, STRIPBYTECOUNTS, ROWSPERSTRIP, ICCPROFILE]
+        atts = {}
+        # bits per sample is a single short in the tiff directory, not a list.
+        atts[BITSPERSAMPLE] = bits[0]
+        # Merge the ones that we have with (optional) more bits from
+        # the original file, e.g x,y resolution so that we can
+        # save(load('')) == original file.
+        for k, v in itertools.chain(ifd.items(),
+                                    getattr(im, 'ifd', {}).items()):
+            if k not in atts and k not in blocklist:
+                if type(v[0]) == tuple and len(v) > 1:
+                    # A tuple of more than one rational tuples
+                    # flatten to floats,
+                    # following tiffcp.c->cpTag->TIFF_RATIONAL
+                    atts[k] = [float(elt[0])/float(elt[1]) for elt in v]
+                    continue
+                if type(v[0]) == tuple and len(v) == 1:
+                    # A tuple of one rational tuples
+                    # flatten to floats,
+                    # following tiffcp.c->cpTag->TIFF_RATIONAL
+                    atts[k] = float(v[0][0])/float(v[0][1])
+                    continue
+                if (type(v) == tuple and
+                        (len(v) > 2 or
+                            (len(v) == 2 and v[1] == 0))):
+                    # List of ints?
+                    # Avoid divide by zero in next if-clause
+                    if type(v[0]) in (int, float):
+                        atts[k] = list(v)
+                    continue
+                if type(v) == tuple and len(v) == 2:
+                    # one rational tuple
+                    # flatten to float,
+                    # following tiffcp.c->cpTag->TIFF_RATIONAL
+                    atts[k] = float(v[0])/float(v[1])
+                    continue
+                if type(v) == tuple and len(v) == 1:
+                    v = v[0]
+                    # drop through
+                if isStringType(v):
+                    atts[k] = bytes(v.encode('ascii', 'replace')) + b"\0"
+                    continue
+                else:
+                    # int or similar
+                    atts[k] = v
 
+        if Image.DEBUG:
+            print(atts)
+
+        # libtiff always expects the bytes in native order.
+        # we're storing image byte order. So, if the rawmode
+        # contains I;16, we need to convert from native to image
+        # byte order.
+        if im.mode in ('I;16B', 'I;16'):
+            rawmode = 'I;16N'
+
+        a = (rawmode, compression, _fp, filename, atts)
+        # print (im.mode, compression, a, im.encoderconfig)
+        e = Image._getencoder(im.mode, 'libtiff', a, im.encoderconfig)
+        e.setimage(im.im, (0, 0)+im.size)
+        while True:
+            # undone, change to self.decodermaxblock:
+            l, s, d = e.encode(16*1024)
+            if not _fp:
+                fp.write(d)
+            if s:
+                break
+        if s < 0:
+            raise IOError("encoder error %d when writing image file" % s)
+
+    else:
+        offset = ifd.save(fp)
+
+        ImageFile._save(im, fp, [
+            ("raw", (0, 0)+im.size, offset, (rawmode, stride, 1))
+            ])
 
     # -- helper for multi-page save --
-    if im.encoderinfo.has_key("_debug_multipage"):
-        #just to access o32 and o16 (using correct byte order)
+    if "_debug_multipage" in im.encoderinfo:
+        # just to access o32 and o16 (using correct byte order)
         im._debug_multipage = ifd
 
 #

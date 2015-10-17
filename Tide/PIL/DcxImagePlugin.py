@@ -23,17 +23,18 @@
 
 __version__ = "0.2"
 
-import Image
+from PIL import Image, _binary
 
-from PcxImagePlugin import PcxImageFile
+from PIL.PcxImagePlugin import PcxImageFile
 
-MAGIC = 0x3ADE68B1 # QUIZ: what's this value, then?
+MAGIC = 0x3ADE68B1  # QUIZ: what's this value, then?
 
-def i32(c):
-    return ord(c[0]) + (ord(c[1])<<8) + (ord(c[2])<<16) + (ord(c[3])<<24)
+i32 = _binary.i32le
+
 
 def _accept(prefix):
-    return i32(prefix) == MAGIC
+    return len(prefix) >= 4 and i32(prefix) == MAGIC
+
 
 ##
 # Image plugin for the Intel DCX format.
@@ -48,7 +49,7 @@ class DcxImageFile(PcxImageFile):
         # Header
         s = self.fp.read(4)
         if i32(s) != MAGIC:
-            raise SyntaxError, "not a DCX file"
+            raise SyntaxError("not a DCX file")
 
         # Component directory
         self._offset = []
@@ -60,6 +61,14 @@ class DcxImageFile(PcxImageFile):
 
         self.__fp = self.fp
         self.seek(0)
+
+    @property
+    def n_frames(self):
+        return len(self._offset)
+
+    @property
+    def is_animated(self):
+        return len(self._offset) > 1
 
     def seek(self, frame):
         if frame >= len(self._offset):

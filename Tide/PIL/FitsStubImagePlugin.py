@@ -9,7 +9,7 @@
 # See the README file for information on usage and redistribution.
 #
 
-import Image, ImageFile
+from PIL import Image, ImageFile
 
 _handler = None
 
@@ -18,6 +18,7 @@ _handler = None
 #
 # @param handler Handler object.
 
+
 def register_handler(handler):
     global _handler
     _handler = handler
@@ -25,8 +26,10 @@ def register_handler(handler):
 # --------------------------------------------------------------------
 # Image adapter
 
+
 def _accept(prefix):
-    return prefix[:6] == "SIMPLE"
+    return prefix[:6] == b"SIMPLE"
+
 
 class FITSStubImageFile(ImageFile.StubImageFile):
 

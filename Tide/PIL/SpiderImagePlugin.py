@@ -33,18 +33,26 @@
 # http://www.wadsworth.org/spider_doc/spider/docs/image_doc.html
 #
 
-import Image, ImageFile
-import os, struct, sys
+from __future__ import print_function
+
+from PIL import Image, ImageFile
+import os
+import struct
+import sys
+
 
 def isInt(f):
     try:
         i = int(f)
-        if f-i == 0: return 1
-        else:        return 0
-    except:
+        if f-i == 0:
+            return 1
+        else:
+            return 0
+    except ValueError:
         return 0
 
-iforms = [1,3,-11,-12,-21,-22]
+iforms = [1, 3, -11, -12, -21, -22]
+
 
 # There is no magic number to identify Spider files, so just check a
 # series of header locations to see if they have reasonable values.
@@ -54,30 +62,32 @@ iforms = [1,3,-11,-12,-21,-22]
 def isSpiderHeader(t):
     h = (99,) + t   # add 1 value so can use spider header index start=1
     # header values 1,2,5,12,13,22,23 should be integers
-    for i in [1,2,5,12,13,22,23]:
-        if not isInt(h[i]): return 0
+    for i in [1, 2, 5, 12, 13, 22, 23]:
+        if not isInt(h[i]):
+            return 0
     # check iform
     iform = int(h[5])
-    if not iform in iforms: return 0
+    if iform not in iforms:
+        return 0
     # check other header values
     labrec = int(h[13])   # no. records in file header
     labbyt = int(h[22])   # total no. of bytes in header
     lenbyt = int(h[23])   # record length in bytes
-    #print "labrec = %d, labbyt = %d, lenbyt = %d" % (labrec,labbyt,lenbyt)
-    if labbyt != (labrec * lenbyt): return 0
+    # print "labrec = %d, labbyt = %d, lenbyt = %d" % (labrec,labbyt,lenbyt)
+    if labbyt != (labrec * lenbyt):
+        return 0
     # looks like a valid header
     return labbyt
 
+
 def isSpiderImage(filename):
-    fp = open(filename,'rb')
+    fp = open(filename, 'rb')
     f = fp.read(92)   # read 23 * 4 bytes
     fp.close()
-    bigendian = 1
-    t = struct.unpack('>23f',f)    # try big-endian first
+    t = struct.unpack('>23f', f)  # try big-endian first
     hdrlen = isSpiderHeader(t)
     if hdrlen == 0:
-        bigendian = 0
-        t = struct.unpack('<23f',f)  # little-endian
+        t = struct.unpack('<23f', f)  # little-endian
         hdrlen = isSpiderHeader(t)
     return hdrlen
 
@@ -94,35 +104,35 @@ class SpiderImageFile(ImageFile.ImageFile):
 
         try:
             self.bigendian = 1
-            t = struct.unpack('>27f',f)    # try big-endian first
+            t = struct.unpack('>27f', f)  # try big-endian first
             hdrlen = isSpiderHeader(t)
             if hdrlen == 0:
                 self.bigendian = 0
-                t = struct.unpack('<27f',f)  # little-endian
+                t = struct.unpack('<27f', f)  # little-endian
                 hdrlen = isSpiderHeader(t)
             if hdrlen == 0:
-                raise SyntaxError, "not a valid Spider file"
+                raise SyntaxError("not a valid Spider file")
         except struct.error:
-            raise SyntaxError, "not a valid Spider file"
+            raise SyntaxError("not a valid Spider file")
 
         h = (99,) + t   # add 1 value : spider header index starts at 1
         iform = int(h[5])
         if iform != 1:
-            raise SyntaxError, "not a Spider 2D image"
+            raise SyntaxError("not a Spider 2D image")
 
-        self.size = int(h[12]), int(h[2]) # size in pixels (width, height)
+        self.size = int(h[12]), int(h[2])  # size in pixels (width, height)
         self.istack = int(h[24])
         self.imgnumber = int(h[27])
 
         if self.istack == 0 and self.imgnumber == 0:
             # stk=0, img=0: a regular 2D image
             offset = hdrlen
-            self.nimages = 1
+            self._nimages = 1
         elif self.istack > 0 and self.imgnumber == 0:
             # stk>0, img=0: Opening the stack for the first time
             self.imgbytes = int(h[12]) * int(h[2]) * 4
             self.hdrlen = hdrlen
-            self.nimages = int(h[26])
+            self._nimages = int(h[26])
             # Point to the first image in the stack
             offset = hdrlen * 2
             self.imgnumber = 1
@@ -131,7 +141,7 @@ class SpiderImageFile(ImageFile.ImageFile):
             offset = hdrlen + self.stkoffset
             self.istack = 2  # So Image knows it's still a stack
         else:
-            raise SyntaxError, "inconsistent stack header values"
+            raise SyntaxError("inconsistent stack header values")
 
         if self.bigendian:
             self.rawmode = "F;32BF"
@@ -139,9 +149,18 @@ class SpiderImageFile(ImageFile.ImageFile):
             self.rawmode = "F;32F"
         self.mode = "F"
 
-        self.tile = [("raw", (0, 0) + self.size, offset,
-                    (self.rawmode, 0, 1))]
-        self.__fp = self.fp # FIXME: hack
+        self.tile = [
+            ("raw", (0, 0) + self.size, offset,
+                (self.rawmode, 0, 1))]
+        self.__fp = self.fp  # FIXME: hack
+
+    @property
+    def n_frames(self):
+        return self._nimages
+
+    @property
+    def is_animated(self):
+        return self._nimages > 1
 
     # 1st image index is zero (although SPIDER imgnumber starts at 1)
     def tell(self):
@@ -153,8 +172,8 @@ class SpiderImageFile(ImageFile.ImageFile):
     def seek(self, frame):
         if self.istack == 0:
             return
-        if frame >= self.nimages:
-            raise EOFError, "attempt to seek past end of file"
+        if frame >= self._nimages:
+            raise EOFError("attempt to seek past end of file")
         self.stkoffset = self.hdrlen + frame * (self.hdrlen + self.imgbytes)
         self.fp = self.__fp
         self.fp.seek(self.stkoffset)
@@ -162,17 +181,18 @@ class SpiderImageFile(ImageFile.ImageFile):
 
     # returns a byte image after rescaling to 0..255
     def convert2byte(self, depth=255):
-        (min, max) = self.getextrema()
+        (minimum, maximum) = self.getextrema()
         m = 1
-        if max != min:
-            m = depth / (max-min)
-        b = -m * min
+        if maximum != minimum:
+            m = depth / (maximum-minimum)
+        b = -m * minimum
         return self.point(lambda i, m=m, b=b: i * m + b).convert("L")
 
     # returns a ImageTk.PhotoImage object, after rescaling to 0..255
     def tkPhotoImage(self):
-        import ImageTk
+        from PIL import ImageTk
         return ImageTk.PhotoImage(self.convert2byte(), palette=256)
+
 
 # --------------------------------------------------------------------
 # Image series
@@ -180,35 +200,37 @@ class SpiderImageFile(ImageFile.ImageFile):
 # given a list of filenames, return a list of images
 def loadImageSeries(filelist=None):
     " create a list of Image.images for use in montage "
-    if filelist == None or len(filelist) < 1:
+    if filelist is None or len(filelist) < 1:
         return
 
     imglist = []
     for img in filelist:
         if not os.path.exists(img):
-            print "unable to find %s" % img
+            print("unable to find %s" % img)
             continue
         try:
             im = Image.open(img).convert2byte()
         except:
             if not isSpiderImage(img):
-                print img + " is not a Spider image file"
+                print(img + " is not a Spider image file")
             continue
         im.info['filename'] = img
         imglist.append(im)
     return imglist
 
+
 # --------------------------------------------------------------------
 # For saving images in Spider format
 
 def makeSpiderHeader(im):
-    nsam,nrow = im.size
+    nsam, nrow = im.size
     lenbyt = nsam * 4  # There are labrec records in the header
     labrec = 1024 / lenbyt
-    if 1024%lenbyt != 0: labrec += 1
+    if 1024 % lenbyt != 0:
+        labrec += 1
     labbyt = labrec * lenbyt
     hdr = []
-    nvalues = labbyt / 4
+    nvalues = int(labbyt / 4)
     for i in range(nvalues):
         hdr.append(0.0)
 
@@ -216,13 +238,13 @@ def makeSpiderHeader(im):
         return []
 
     # NB these are Fortran indices
-    hdr[1]  = 1.0           # nslice (=1 for an image)
-    hdr[2]  = float(nrow)   # number of rows per slice
-    hdr[5]  = 1.0           # iform for 2D image
-    hdr[12] = float(nsam)   # number of pixels per line
-    hdr[13] = float(labrec) # number of records in file header
-    hdr[22] = float(labbyt) # total number of bytes in header
-    hdr[23] = float(lenbyt) # record length in bytes
+    hdr[1] = 1.0             # nslice (=1 for an image)
+    hdr[2] = float(nrow)     # number of rows per slice
+    hdr[5] = 1.0             # iform for 2D image
+    hdr[12] = float(nsam)    # number of pixels per line
+    hdr[13] = float(labrec)  # number of records in file header
+    hdr[22] = float(labbyt)  # total number of bytes in header
+    hdr[23] = float(lenbyt)  # record length in bytes
 
     # adjust for Fortran indexing
     hdr = hdr[1:]
@@ -230,8 +252,9 @@ def makeSpiderHeader(im):
     # pack binary data into a string
     hdrstr = []
     for v in hdr:
-        hdrstr.append(struct.pack('f',v))
+        hdrstr.append(struct.pack('f', v))
     return hdrstr
+
 
 def _save(im, fp, filename):
     if im.mode[0] != "F":
@@ -239,23 +262,24 @@ def _save(im, fp, filename):
 
     hdr = makeSpiderHeader(im)
     if len(hdr) < 256:
-        raise IOError, "Error creating Spider header"
+        raise IOError("Error creating Spider header")
 
     # write the SPIDER header
     try:
         fp = open(filename, 'wb')
     except:
-        raise IOError, "Unable to open %s for writing" % filename
+        raise IOError("Unable to open %s for writing" % filename)
     fp.writelines(hdr)
 
-    rawmode = "F;32NF"  #32-bit native floating point
-    ImageFile._save(im, fp, [("raw", (0,0)+im.size, 0, (rawmode,0,1))])
+    rawmode = "F;32NF"  # 32-bit native floating point
+    ImageFile._save(im, fp, [("raw", (0, 0)+im.size, 0, (rawmode, 0, 1))])
 
     fp.close()
 
+
 def _save_spider(im, fp, filename):
     # get the filename extension and register it with Image
-    fn, ext = os.path.splitext(filename)
+    ext = os.path.splitext(filename)[1]
     Image.register_extension("SPIDER", ext)
     _save(im, fp, filename)
 
@@ -267,12 +291,12 @@ Image.register_save("SPIDER", _save_spider)
 if __name__ == "__main__":
 
     if not sys.argv[1:]:
-        print "Syntax: python SpiderImagePlugin.py Spiderimage [outfile]"
+        print("Syntax: python SpiderImagePlugin.py Spiderimage [outfile]")
         sys.exit()
 
     filename = sys.argv[1]
     if not isSpiderImage(filename):
-        print "input image must be in Spider format"
+        print("input image must be in Spider format")
         sys.exit()
 
     outfile = ""
@@ -280,15 +304,17 @@ if __name__ == "__main__":
         outfile = sys.argv[2]
 
     im = Image.open(filename)
-    print "image: " + str(im)
-    print "format: " + str(im.format)
-    print "size: " + str(im.size)
-    print "mode: " + str(im.mode)
-    print "max, min: ",
-    print im.getextrema()
+    print("image: " + str(im))
+    print("format: " + str(im.format))
+    print("size: " + str(im.size))
+    print("mode: " + str(im.mode))
+    print("max, min: ", end=' ')
+    print(im.getextrema())
 
     if outfile != "":
         # perform some image operation
         im = im.transpose(Image.FLIP_LEFT_RIGHT)
-        print "saving a flipped version of %s as %s " % (os.path.basename(filename), outfile)
+        print(
+            "saving a flipped version of %s as %s " %
+            (os.path.basename(filename), outfile))
         im.save(outfile, "SPIDER")
