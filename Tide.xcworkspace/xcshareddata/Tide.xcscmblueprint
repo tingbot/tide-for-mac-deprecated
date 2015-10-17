@@ -1,0 +1,44 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "9E4806B0392D31480D05BA006A232FA7FF5B049F",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "9E4806B0392D31480D05BA006A232FA7FF5B049F" : 0,
+    "6AA9B563339F4175433F6583E018B0E6CF800437" : 0,
+    "C88D7FFC2D555BBBB31D0C73A00E787320850086" : 0,
+    "378B54B5205DE31B3B2EBDA14687C757C53E503B" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "720BFB5F-D909-4BC8-B65F-9F1180E0E15F",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "9E4806B0392D31480D05BA006A232FA7FF5B049F" : "Tide",
+    "6AA9B563339F4175433F6583E018B0E6CF800437" : "Tide\/Pods\/ACEView\/ACEView\/Dependencies\/ace\/",
+    "C88D7FFC2D555BBBB31D0C73A00E787320850086" : "Tide\/Pods\/ANSIEscapeHelper\/",
+    "378B54B5205DE31B3B2EBDA14687C757C53E503B" : "Tide\/Pods\/ACEView\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "Tide",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Tide.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/tingbot\/ACEView.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "378B54B5205DE31B3B2EBDA14687C757C53E503B"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/ajaxorg\/ace-builds.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "6AA9B563339F4175433F6583E018B0E6CF800437"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:tingbot\/tide.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "9E4806B0392D31480D05BA006A232FA7FF5B049F"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/griffin-stewie\/ANSIEscapeHelper.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "C88D7FFC2D555BBBB31D0C73A00E787320850086"
+    }
+  ]
+}
