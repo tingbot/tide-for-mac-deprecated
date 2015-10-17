@@ -104,12 +104,24 @@
     return YES;
 }
 
+static NSWindow *__weak lastOpenedWindow = nil;
+
 - (void)makeWindowControllers
 {
-    NSWindow *window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 632, 533)
+    NSScreen *screen = [NSScreen mainScreen];
+    
+    NSWindow *window = [[NSWindow alloc] initWithContentRect:NSMakeRect(30,
+                                                                        CGRectGetMaxY(screen.frame) - 533 - 50,
+                                                                        632,
+                                                                        533)
                                                    styleMask:NSClosableWindowMask | NSTitledWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask
                                                      backing:NSBackingStoreBuffered
-                                                       defer:YES];
+                                                       defer:YES
+                                                      screen:screen];
+    
+    NSPoint cascadePoint = [lastOpenedWindow cascadeTopLeftFromPoint:NSZeroPoint];
+    [window cascadeTopLeftFromPoint:cascadePoint];
+    lastOpenedWindow = window;
     
     NSView *view = [NSView new];
     [window setContentView:view];
