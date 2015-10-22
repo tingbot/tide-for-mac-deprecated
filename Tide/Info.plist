@@ -14,7 +14,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>TingappIcon</string>
 			<key>CFBundleTypeName</key>
-			<string>DocumentType</string>
+			<string>TideApp</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
 				<string>????</string>
@@ -43,6 +43,17 @@
 	<string>0.2.4</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>Tide source</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>tide-app-source</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>7</string>
 	<key>LSMinimumSystemVersion</key>

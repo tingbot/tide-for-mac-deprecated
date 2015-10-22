@@ -9,5 +9,6 @@
 #import <Cocoa/Cocoa.h>
 
 int main(int argc, const char * argv[]) {
+    [NSClassFromString(@"URLHandler") sharedInstance];
     return NSApplicationMain(argc, argv);
 }

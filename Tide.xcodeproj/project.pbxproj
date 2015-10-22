@@ -15,6 +15,7 @@
 		5629F0121ABF60F000DEBC4F /* NetworkDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5629F0111ABF60F000DEBC4F /* NetworkDevice.m */; };
 		5629F0141ABF616B00DEBC4F /* tbtool in Resources */ = {isa = PBXBuildFile; fileRef = 5629F0131ABF616B00DEBC4F /* tbtool */; };
 		5629F0161ABF629B00DEBC4F /* docopt.py in Resources */ = {isa = PBXBuildFile; fileRef = 5629F0151ABF629B00DEBC4F /* docopt.py */; };
+		562B6C801BD966A900B8A17F /* URLHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 562B6C7F1BD966A900B8A17F /* URLHandler.m */; settings = {ASSET_TAGS = (); }; };
 		5632708919DC170F0035768D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5632708819DC170F0035768D /* main.m */; };
 		5632708C19DC170F0035768D /* Document.m in Sources */ = {isa = PBXBuildFile; fileRef = 5632708B19DC170F0035768D /* Document.m */; };
 		5632709119DC170F0035768D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5632709019DC170F0035768D /* Images.xcassets */; };
@@ -79,6 +80,8 @@
 		5629F0111ABF60F000DEBC4F /* NetworkDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkDevice.m; sourceTree = "<group>"; };
 		5629F0131ABF616B00DEBC4F /* tbtool */ = {isa = PBXFileReference; explicitFileType = text.script.python; fileEncoding = 4; path = tbtool; sourceTree = "<group>"; };
 		5629F0151ABF629B00DEBC4F /* docopt.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = docopt.py; sourceTree = "<group>"; };
+		562B6C7E1BD966A900B8A17F /* URLHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLHandler.h; sourceTree = "<group>"; };
+		562B6C7F1BD966A900B8A17F /* URLHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = URLHandler.m; sourceTree = "<group>"; };
 		5632708319DC170F0035768D /* Tide.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tide.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5632708719DC170F0035768D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5632708819DC170F0035768D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -190,6 +193,8 @@
 				56D111231AD9675700C99ACF /* NetworkDeviceDiscoverer.m */,
 				56D1D27E1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.h */,
 				56D1D27F1A1BF5B20084E76A /* FileSystemOutlineViewDataSource.m */,
+				562B6C7E1BD966A900B8A17F /* URLHandler.h */,
+				562B6C7F1BD966A900B8A17F /* URLHandler.m */,
 				564772131A63D9F500498A35 /* NSFileWrapper+QuicklookURL.h */,
 				564772141A63D9F500498A35 /* NSFileWrapper+QuicklookURL.m */,
 				56DFF9401B681A4500EF6F57 /* NSImage+MXUtilities.h */,
@@ -449,6 +454,7 @@
 				56F84F2D1A82D28F0011BDFF /* Device.m in Sources */,
 				5632708C19DC170F0035768D /* Document.m in Sources */,
 				56D111241AD9675700C99ACF /* NetworkDeviceDiscoverer.m in Sources */,
+				562B6C801BD966A900B8A17F /* URLHandler.m in Sources */,
 				5629F00F1AB9CB2900DEBC4F /* File.m in Sources */,
 				56F84F2A1A82D2580011BDFF /* SimulatorDevice.m in Sources */,
 				5629F0121ABF60F000DEBC4F /* NetworkDevice.m in Sources */,
