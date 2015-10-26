@@ -192,6 +192,10 @@ class Screen(Surface):
         platform_specific.fixup_window()
         return surface
 
+    def ensure_display_setup(self):
+        # setup pygame.display by calling the self.surface getter
+        self.surface
+
     def update(self):
         pygame.display.update()
         self.needs_update = False
@@ -228,7 +232,9 @@ class Image(Surface):
         if extension.lower() == '.gif':
             return GIFImage(filename=filename)
 
-        pygame.init()
+        # ensure the screen surface has been created (otherwise pygame doesn't know the 'video mode')
+        screen.ensure_display_setup()
+
         surface = pygame.image.load(filename)
         surface = surface.convert_alpha()
 
