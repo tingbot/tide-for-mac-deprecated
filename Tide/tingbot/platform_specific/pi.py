@@ -26,6 +26,7 @@ def fixup_window():
 button_callback = None
 
 def register_button_callback(callback):
+    global button_callback
     ensure_button_setup()
     button_callback = callback
 
@@ -50,8 +51,8 @@ def button_setup():
     GPIO.setwarnings(False)
 
     for button_pin in button_pins:
-        GPIO.setup(button.pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        GPIO.add_event_detect(button.pin, GPIO.BOTH, bouncetime=200, callback=GPIO_callback)
+        GPIO.setup(button_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.add_event_detect(button_pin, GPIO.BOTH, bouncetime=200, callback=GPIO_callback)
 
 def GPIO_callback(pin):
     button_index = button_pin_to_index[pin]
