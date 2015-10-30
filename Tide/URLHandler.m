@@ -60,9 +60,12 @@
                                                                                           error:NULL];
     
     NSFileWrapper *bundle = [[NSFileWrapper alloc] initDirectoryWithFileWrappers:@{}];
+    NSFileWrapper *codeFile = [[NSFileWrapper alloc] initRegularFileWithContents:
+                               [code dataUsingEncoding:NSUTF8StringEncoding]];
+
+    codeFile.filename = codeFile.preferredFilename = @"main.py";
     
-    [bundle addRegularFileWithContents:[code dataUsingEncoding:NSUTF8StringEncoding]
-                     preferredFilename:@"main.py"];
+    [bundle addFileWrapper:codeFile];
     
     [doc readFromFileWrapper:bundle
                       ofType:@"TideApp"
