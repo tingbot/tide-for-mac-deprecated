@@ -58,7 +58,7 @@ def simulate(app_path):
     if os.path.exists(main_file):
         os.execvpe(main_file, [main_file], environment)
     else:
-        os.execvpe('python', ['python', '-c', 'import main, tingbot; tingbot.run(main)'], environment)
+        os.execvpe('python', ['python', 'main.py'], environment)
 
 
 def run(app_path, hostname):
