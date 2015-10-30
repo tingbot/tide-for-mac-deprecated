@@ -1,0 +1,3 @@
+[submodule "vendor/tingbot-python"]
+	path = vendor/tingbot-python
+	url = https://github.com/tingbot/tingbot-python.git

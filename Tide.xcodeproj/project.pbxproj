@@ -124,7 +124,7 @@
 		56F84F291A82D2580011BDFF /* SimulatorDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimulatorDevice.m; sourceTree = "<group>"; };
 		56F84F2B1A82D28F0011BDFF /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
 		56F84F2C1A82D28F0011BDFF /* Device.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Device.m; sourceTree = "<group>"; };
-		56F84F2E1A82D4B20011BDFF /* tingbot */ = {isa = PBXFileReference; lastKnownFileType = folder; path = tingbot; sourceTree = "<group>"; };
+		56F84F2E1A82D4B20011BDFF /* tingbot */ = {isa = PBXFileReference; lastKnownFileType = folder; name = tingbot; path = "vendor/tingbot-python/tingbot"; sourceTree = SOURCE_ROOT; };
 		A92CEEF1C365440A92FDEFBC /* libPods-Tide.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Tide.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4DEF11D5E47AC6F783897D7 /* Pods-Tide.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tide.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tide/Pods-Tide.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
