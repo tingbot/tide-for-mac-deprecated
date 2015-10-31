@@ -7,6 +7,7 @@ pod 'Masonry'
 pod 'ANSIEscapeHelper', :git => 'https://github.com/griffin-stewie/ANSIEscapeHelper.git'
 pod 'KVOController'
 pod 'ReactiveCocoa'
+pod 'Sparkle'
 end
 
 target "TideTests" do

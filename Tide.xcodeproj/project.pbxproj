@@ -290,6 +290,8 @@
 				7BAB7418D23844D1B8EB4BA7 /* Copy Pods Resources */,
 				56E5B82C1B4C4E1200048E18 /* CopyFiles */,
 				567E53C71BC052FD00287C57 /* Fix up library paths */,
+				5E7B263C83A87BF20AD5E80A /* Embed Pods Frameworks */,
+				56D3BD481BE4D2FD00EB7506 /* Sign Sparkle.framework */,
 			);
 			buildRules = (
 			);
@@ -407,6 +409,36 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "RESOURCES_DIR=\"${BUILT_PRODUCTS_DIR}\"/\"${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"\n\nset -o errexit\nset -o xtrace\n\ncd \"${RESOURCES_DIR}\"\n\n(\ncd pygame\n\nfor f in *.so; do\n    install_name_tool -change \\\n        '@executable_path/../Frameworks/SDL.framework/Versions/A/SDL' \\\n        '@loader_path/../SDL.framework/Versions/A/SDL' \\\n        \"$f\"\n    install_name_tool -change \\\n        '@executable_path/../Frameworks/SDL_ttf.framework/Versions/A/SDL_ttf' \\\n        '@loader_path/../SDL_ttf.framework/Versions/A/SDL_ttf' \\\n        \"$f\"\n    install_name_tool -change \\\n        '@executable_path/../Frameworks/SDL_image.framework/Versions/A/SDL_image' \\\n        '@loader_path/../SDL_image.framework/Versions/A/SDL_image' \\\n        \"$f\"\ndone\n)\n\ninstall_name_tool -change \\\n    '@executable_path/../Frameworks/SDL.framework/Versions/A/SDL' \\\n    '@loader_path/../../../SDL.framework/Versions/A/SDL' \\\n    SDL_ttf.framework/Versions/A/SDL_ttf\n\ninstall_name_tool -change \\\n    '@executable_path/../Frameworks/SDL.framework/Versions/A/SDL' \\\n    '@loader_path/../../../SDL.framework/Versions/A/SDL' \\\n    SDL_image.framework/Versions/A/SDL_image\n\ninstall_name_tool -change \\\n    '/usr/X11/lib/libfreetype.6.dylib' \\\n    '@loader_path/../../../libfreetype.6.dylib' \\\n    SDL_ttf.framework/Versions/A/SDL_ttf\n\nchmod 644 *.dylib\n\ninstall_name_tool -change \\\n    '/usr/local/lib/libpng16.16.dylib' \\\n    '@loader_path/libpng16.16.dylib' \\\n    'libfreetype.6.dylib'\n\nchmod 444 *.dylib\n";
+			showEnvVarsInLog = 0;
+		};
+		56D3BD481BE4D2FD00EB7506 /* Sign Sparkle.framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Sign Sparkle.framework";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"$CODE_SIGN_IDENTITY\" ]; then\nLOCATION=\"${BUILT_PRODUCTS_DIR}\"/\"${FRAMEWORKS_FOLDER_PATH}\"\ncodesign --verbose --force --sign \"$CODE_SIGN_IDENTITY\" \"$LOCATION/Sparkle.framework/Versions/A\"\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		5E7B263C83A87BF20AD5E80A /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Tide/Pods-Tide-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		7BAB7418D23844D1B8EB4BA7 /* Copy Pods Resources */ = {

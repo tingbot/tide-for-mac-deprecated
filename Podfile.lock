@@ -10,6 +10,7 @@ PODS:
   - ReactiveCocoa/no-arc (2.5)
   - ReactiveCocoa/UI (2.5):
     - ReactiveCocoa/Core
+  - Sparkle (1.11.0)
 
 DEPENDENCIES:
   - ACEView (from `https://github.com/tingbot/ACEView.git`)
@@ -17,6 +18,7 @@ DEPENDENCIES:
   - KVOController
   - Masonry
   - ReactiveCocoa
+  - Sparkle
 
 EXTERNAL SOURCES:
   ACEView:
@@ -38,5 +40,6 @@ SPEC CHECKSUMS:
   KVOController: 9fd8f0343670994e4b6f9f0b31f5a45663f3e1cf
   Masonry: 4972309f2f134de9dd312f4dc4a21359b50e6caa
   ReactiveCocoa: e2db045570aa97c695e7aa97c2bcab222ae51f4a
+  Sparkle: cf10103ef35fd89caa35373bfd772c5d6f9c7d73
 
-COCOAPODS: 0.37.2
+COCOAPODS: 0.39.0
