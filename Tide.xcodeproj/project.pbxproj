@@ -15,7 +15,7 @@
 		5629F0121ABF60F000DEBC4F /* NetworkDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5629F0111ABF60F000DEBC4F /* NetworkDevice.m */; };
 		5629F0141ABF616B00DEBC4F /* tbtool in Resources */ = {isa = PBXBuildFile; fileRef = 5629F0131ABF616B00DEBC4F /* tbtool */; };
 		5629F0161ABF629B00DEBC4F /* docopt.py in Resources */ = {isa = PBXBuildFile; fileRef = 5629F0151ABF629B00DEBC4F /* docopt.py */; };
-		562B6C801BD966A900B8A17F /* URLHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 562B6C7F1BD966A900B8A17F /* URLHandler.m */; settings = {ASSET_TAGS = (); }; };
+		562B6C801BD966A900B8A17F /* URLHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 562B6C7F1BD966A900B8A17F /* URLHandler.m */; };
 		5632708919DC170F0035768D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5632708819DC170F0035768D /* main.m */; };
 		5632708C19DC170F0035768D /* Document.m in Sources */ = {isa = PBXBuildFile; fileRef = 5632708B19DC170F0035768D /* Document.m */; };
 		5632709119DC170F0035768D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5632709019DC170F0035768D /* Images.xcassets */; };
