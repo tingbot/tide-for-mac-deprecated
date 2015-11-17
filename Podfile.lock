@@ -35,7 +35,7 @@ CHECKOUT OPTIONS:
     :git: https://github.com/griffin-stewie/ANSIEscapeHelper.git
 
 SPEC CHECKSUMS:
-  ACEView: cf3f665c61c8567d5dd04f395796342f58bad1a0
+  ACEView: 4c664c3511d3070783b7f06189491de00b518718
   ANSIEscapeHelper: 1b77fd775487531a476bc7a75c080068ad78ff9f
   KVOController: 9fd8f0343670994e4b6f9f0b31f5a45663f3e1cf
   Masonry: 4972309f2f134de9dd312f4dc4a21359b50e6caa
