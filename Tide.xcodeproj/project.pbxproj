@@ -21,6 +21,7 @@
 		5632709119DC170F0035768D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5632709019DC170F0035768D /* Images.xcassets */; };
 		5632709419DC17100035768D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5632709219DC17100035768D /* MainMenu.xib */; };
 		563270A019DC17100035768D /* TideTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5632709F19DC17100035768D /* TideTests.m */; };
+		56340F0E1BFBB3E100525020 /* zmq in Resources */ = {isa = PBXBuildFile; fileRef = 56340F0D1BFBB3E100525020 /* zmq */; };
 		564772151A63D9F500498A35 /* NSFileWrapper+QuicklookURL.m in Sources */ = {isa = PBXBuildFile; fileRef = 564772141A63D9F500498A35 /* NSFileWrapper+QuicklookURL.m */; };
 		567E53CB1BC3C86A00287C57 /* libpng16.16.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 567E53CA1BC3C86A00287C57 /* libpng16.16.dylib */; };
 		567E53CD1BC3C87B00287C57 /* libfreetype.6.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 567E53CC1BC3C87B00287C57 /* libfreetype.6.dylib */; };
@@ -92,6 +93,7 @@
 		5632709919DC17100035768D /* TideTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TideTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5632709E19DC17100035768D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5632709F19DC17100035768D /* TideTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TideTests.m; sourceTree = "<group>"; };
+		56340F0D1BFBB3E100525020 /* zmq */ = {isa = PBXFileReference; lastKnownFileType = folder; path = zmq; sourceTree = "<group>"; };
 		564772131A63D9F500498A35 /* NSFileWrapper+QuicklookURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileWrapper+QuicklookURL.h"; sourceTree = "<group>"; };
 		564772141A63D9F500498A35 /* NSFileWrapper+QuicklookURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileWrapper+QuicklookURL.m"; sourceTree = "<group>"; };
 		567E53CA1BC3C86A00287C57 /* libpng16.16.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libpng16.16.dylib; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 				56F84F2E1A82D4B20011BDFF /* tingbot */,
 				567E53CE1BC3D80500287C57 /* requests */,
 				567E53D01BC3D81800287C57 /* PIL */,
+				56340F0D1BFBB3E100525020 /* zmq */,
 				56E5B82D1B4C4E9D00048E18 /* Pygame Dependencies */,
 				5632708619DC170F0035768D /* Supporting Files */,
 			);
@@ -371,6 +374,7 @@
 				56E5B82B1B4C4A0D00048E18 /* pygame in Resources */,
 				561F550A1B602A92000CB2B9 /* tingbot.key in Resources */,
 				567E53D11BC3D81800287C57 /* PIL in Resources */,
+				56340F0E1BFBB3E100525020 /* zmq in Resources */,
 				567E53CF1BC3D80500287C57 /* requests in Resources */,
 				561F550B1B602A92000CB2B9 /* tingbot.key.pub in Resources */,
 				56E5B8251B4C49F400048E18 /* SDL_image.framework in Resources */,
