@@ -4,4 +4,6 @@
 
 Simple IDE for developing Tingbot apps on the Mac. Download from the [releases page](http://github.com/tingbot/tide/releases/). Python API documentation at [tingbot-python.readthedocs.org](http://tingbot-python.readthedocs.org/).
 
-[Back us on Kickstarter](https://www.kickstarter.com/projects/744235676/647977615)!
+If you're on Windows or Linux, check out our [cross-platform port to Electron](https://github.com/tingbot/tide-electron), which is still in development.
+
+We were successfully funded on [Kickstarter](https://www.kickstarter.com/projects/744235676/647977615) in December 2015. Thanks to all our backers!
